@@ -4,12 +4,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class SimpleMecanumDrive {
 
-    public static final HashMap<DcMotor, double[]> directions = new HashMap<>();
-    public static DcMotor fl, fr, bl, br;
+    private final Map<DcMotor, double[]> directions = new HashMap<>();
+    private final DcMotor fl, fr, bl, br;
 
     public SimpleMecanumDrive(HardwareMap hmap) {
         fl = hmap.get(DcMotor.class, CONFIG.FRONT_LEFT);

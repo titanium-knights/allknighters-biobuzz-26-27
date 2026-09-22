@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
 @TeleOp(name = "TeleOp")
 public class Teleop extends OpMode {
     private SubsystemManager subsystemManager;
-    private Double modifier;
+    private double modifier;
 
     @Override
     public void init() {
@@ -26,12 +26,12 @@ public class Teleop extends OpMode {
                     -gamepad1.left_stick_y * modifier, // negated bc y value is opposite on the stick
                     gamepad1.right_stick_x);
         } else {
-            int xDpadDir = 0;
+            double xDpadDir = 0;
             if (gamepad1.dpad_left) { xDpadDir--; }
             if (gamepad1.dpad_right) { xDpadDir++; }
             xDpadDir *= modifier;
 
-            int yDpadDir = 0;
+            double yDpadDir = 0;
             if (gamepad1.dpad_up) { yDpadDir++; }
             if (gamepad1.dpad_down) { yDpadDir--; }
             yDpadDir *= modifier;
@@ -40,24 +40,5 @@ public class Teleop extends OpMode {
                     xDpadDir, yDpadDir, gamepad1.right_stick_x * 0.8
             );
         }
-//        if (gamepad1.right_trigger > 0.5) {
-//            subsystemManager.outtake.outtakeRun();
-//        } else {
-//            if (gamepad1.right_bumper) {
-//                subsystemManager.outtake.outtakeKYS();
-//            } else {
-//                subsystemManager.outtake.outtakeStop();
-//            }
-//        }
-//
-//        if (gamepad1.left_trigger > 0.5) {
-//            subsystemManager.intake.intakeRun();
-//        } else {
-//            if (gamepad1.left_bumper) {
-//                subsystemManager.intake.intakeReversed();
-//            } else {
-//                subsystemManager.intake.intakeStop();
-//            }
-//        }
     }
 }
