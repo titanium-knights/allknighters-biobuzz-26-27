@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -14,8 +15,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class SubsystemManager {
     public final SimpleMecanumDrive drive;
+    public final Limelight limeLight;
 
     public SubsystemManager(HardwareMap hmap, Telemetry telemetry) {
         drive = new SimpleMecanumDrive(hmap);
+        limeLight = new Limelight(hmap, telemetry);
     }
 }
