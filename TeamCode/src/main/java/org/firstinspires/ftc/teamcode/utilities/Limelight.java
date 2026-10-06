@@ -1,18 +1,15 @@
 package org.firstinspires.ftc.teamcode.utilities;
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.teleop.Teleop;
 
 public class Limelight {
     public Limelight3A limelight3A;
     private LLResult result;
-    private enum limeLightPipeline {};
-    private Telemetry telemetry;
+    private enum limeLightPipeline {}
+    private final Telemetry telemetry;
     final private double dLLtG = 6.7; //distance from LimeLight to Ground; Inches
     final private double aLLfG = 0; //angle from LimeLight from Ground; Degrees
     public Limelight(HardwareMap hmap, Telemetry telemetry){
@@ -42,9 +39,9 @@ public class Limelight {
         double totalAngle = bonusAngle + aLLfG;
         double totalAngleRadians = (totalAngle * Math.PI)/180;
         goalHeight = Math.tan(totalAngleRadians)*distanceToGoal;
-        return goalHeight;
+        return goalHeight + dLLtG;
     }
-    public boolean goalUp(double distanceToGoal, double goalHeight){
+    public boolean goalUp(double distanceToGoal){
         return calculateGoalHeight(distanceToGoal)>-1; //replace -1 with up goal height
     }
 
@@ -53,7 +50,7 @@ public class Limelight {
         double bonusAngle = result.getTy();
         double totalAngle = bonusAngle + aLLfG;
         double totalAngleRadians = (totalAngle * Math.PI)/180;
-        distanceToGoal = goalHeight / Math.sin(totalAngleRadians);
+        distanceToGoal = (goalHeight+dLLtG) / Math.sin(totalAngleRadians);
         return distanceToGoal;
     }
 
