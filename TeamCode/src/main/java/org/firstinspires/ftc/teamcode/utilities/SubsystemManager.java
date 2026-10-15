@@ -14,10 +14,20 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class SubsystemManager {
     public final SimpleMecanumDrive drive;
-    public final Limelight limeLight;
+    private final HardwareMap hardwareMap;
+    private final Telemetry telemetry;
+    private Limelight limeLight;
 
     public SubsystemManager(HardwareMap hmap, Telemetry telemetry) {
         drive = new SimpleMecanumDrive(hmap);
-        limeLight = new Limelight(hmap, telemetry);
+        hardwareMap = hmap;
+        this.telemetry = telemetry;
+    }
+
+    public Limelight getLimelight() {
+        if (limeLight == null) {
+            limeLight = new Limelight(hardwareMap, telemetry);
+        }
+        return limeLight;
     }
 }

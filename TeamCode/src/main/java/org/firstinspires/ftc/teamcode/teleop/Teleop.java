@@ -14,6 +14,8 @@ public class Teleop extends OpMode {
     public void init() {
         subsystemManager = new SubsystemManager(hardwareMap, telemetry);
         modifier = 1.0;
+        telemetry.addData("Drive", "Ready");
+        telemetry.update();
     }
 
     @Override
@@ -39,6 +41,13 @@ public class Teleop extends OpMode {
             subsystemManager.drive.move(
                     xDpadDir, yDpadDir, gamepad1.right_stick_x * 0.8
             );
+        }
+    }
+
+    @Override
+    public void stop() {
+        if (subsystemManager != null) {
+            subsystemManager.drive.stop();
         }
     }
 }
