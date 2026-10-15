@@ -1,21 +1,21 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class LinearSlides {
-    public Servo slideServo;
+    public DcMotor slideMotor;
 
-    double upPos = -1; // Placeholder for the servo position of the slide when up
-    double downPos = -1; // Placeholder for the servo position of the slide when down
+    int upPos = -1; // Placeholder for the servo position of the slide when up
+    int downPos = -1; // Placeholder for the servo position of the slide when down
 
     public LinearSlides(HardwareMap hmap){
-        slideServo = hmap.get(Servo.class, "Slide Servo");
+        slideMotor = hmap.get(DcMotor.class, "Slide Servo");
     }
     public void up(){
-        slideServo.setPosition(upPos);
+        slideMotor.setTargetPosition(upPos);
     }
     public void down(){
-        slideServo.setPosition(downPos);
+        slideMotor.setTargetPosition(downPos);
     }
 }
