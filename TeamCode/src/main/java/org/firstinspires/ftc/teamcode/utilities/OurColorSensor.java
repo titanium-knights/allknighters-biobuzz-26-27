@@ -6,21 +6,36 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+//its called that cuz ColorSensor is a class apparently or something
 public class OurColorSensor {
     public NormalizedColorSensor colorSensorF;
     public NormalizedColorSensor colorSensorB;
     public color lastColor;
     public color currentColor;
+    public Telemetry tele;
     public enum color{
         BLUE,
         RED,
-        YELLOW
+        YELLOW,
+        EMPTY
     }
 
-    public String[] loadedBalls = new String[3];
-    public OurColorSensor(HardwareMap hmap){
+    public LinkedList<color> loadedBalls = new LinkedList<>(); //
+    public OurColorSensor(HardwareMap hmap, Telemetry tele){
         colorSensorF = hmap.get(NormalizedColorSensor.class, "ColorSensorFront");
         colorSensorB = hmap.get(NormalizedColorSensor.class, "ColorSensorBack");
+        this.tele = tele;
+    }
+    public void RegisterBallIntake(color intakedBallColor){
+        loadedBalls.pop();
+        loadedBalls.add(intakedBallColor);
+    }
+    public void RegisterBallShot(){
+        loadedBalls.pop();
+        loadedBalls.add(color.EMPTY);
     }
     public color rgbToColor(Telemetry tele){
         NormalizedRGBA colorsF = colorSensorF.getNormalizedColors();
@@ -51,6 +66,6 @@ public class OurColorSensor {
         tele.addData("Front Color RGB", normRedF +""+ normGreenF +""+ normBlueF);
         tele.addData("Back Color RGB", normRedB + ""+ normGreenB+""+normBlueB);
 
-        return color.BLUE;//placeholder
+        return color.EMPTY;//placeholder
     }
 }
