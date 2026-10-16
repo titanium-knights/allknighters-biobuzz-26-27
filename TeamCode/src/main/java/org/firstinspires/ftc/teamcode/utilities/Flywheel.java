@@ -22,7 +22,7 @@ public class Flywheel {
     public static double TICKS_PER_REV = 28.0;
 
     // --- TUNED PIDF coefficients ---
-    //NOT ACTUALLY TUNED!!!
+    //TODO: NOT ACTUALLY TUNED!!!
     public static double kP = 0.00015;     // REDUCED - P alone was causing full power
     public static double kI = 0.0001;      // Small integral to eliminate steady-state error
     public static double kD = 0.00008;     // INCREASED - more damping to slow down near target

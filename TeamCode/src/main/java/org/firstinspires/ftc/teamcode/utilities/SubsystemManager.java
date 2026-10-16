@@ -17,11 +17,26 @@ public class SubsystemManager {
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
     private Limelight limeLight;
+    private Intake intake;
+    private LinearSlides linearSlides;
+    private MagazineAngle magazineAngle;
+    private MagazineBelt magazineBelt;
+    private MagazineServos magazineServos;
+    private OurColorSensor colorSensors;
+    private OuttakeHood outtakeHood;
 
     public SubsystemManager(HardwareMap hmap, Telemetry telemetry) {
         drive = new SimpleMecanumDrive(hmap);
         hardwareMap = hmap;
         this.telemetry = telemetry;
+        limeLight = new Limelight(hmap, telemetry);
+        intake = new Intake(hmap);
+        linearSlides = new LinearSlides(hmap,telemetry);
+        magazineAngle = new MagazineAngle(hmap);
+        magazineBelt = new MagazineBelt(hmap);
+        magazineServos = new MagazineServos(hmap);
+        colorSensors = new OurColorSensor(hmap, telemetry);
+        outtakeHood = new OuttakeHood(hmap);
     }
 
     public Limelight getLimelight() {
