@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
 import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
 import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
 
+//Wifi Password: FTCTitaniumA15887!
+
 @TeleOp(name = "TeleOp")
 public class Teleop extends OpMode {
     private SubsystemManager subsystemManager;
