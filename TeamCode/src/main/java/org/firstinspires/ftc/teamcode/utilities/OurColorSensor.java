@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -20,6 +21,12 @@ public class OurColorSensor {
     public color lastColor;
     public color currentColor;
     public Telemetry tele;
+
+    public CRServo insideServoR;
+    public CRServo insideServoL;
+
+    private double power = 0.9;
+
     private NumberFormat format = new DecimalFormat("#0.0000");
     public enum color{
         BLUE,
@@ -32,7 +39,20 @@ public class OurColorSensor {
     public OurColorSensor(HardwareMap hmap, Telemetry tele){
         colorSensorR = hmap.get(NormalizedColorSensor.class, "CSRight");
         colorSensorL = hmap.get(NormalizedColorSensor.class, "CSLeft");
+        insideServoR = hmap.get(CRServo.class, "ServoR");
+        insideServoL = hmap.get(CRServo.class, "ServoL");
         this.tele = tele;
+    }
+    public void magazineTelemetry(Telemetry tele) {
+        tele.addData("Magazine", loadedBalls);
+    }
+    public void startIntake(){
+        insideServoL.setPower(-power);
+        insideServoR.setPower(-power);
+    }
+    public void stopIntake(){
+        insideServoL.setPower(0);
+        insideServoR.setPower(0);
     }
     public void RegisterBallIntake(color intakedBallColor){
         loadedBalls.pop();
@@ -42,7 +62,7 @@ public class OurColorSensor {
         loadedBalls.pop();
         loadedBalls.add(color.EMPTY);
     }
-    public color rgbToColor(Telemetry tele){
+    public color detectColor(Telemetry tele){
         NormalizedRGBA colorsR = colorSensorR.getNormalizedColors();
         NormalizedRGBA colorsL = colorSensorL.getNormalizedColors();
 
@@ -71,43 +91,53 @@ public class OurColorSensor {
         tele.addData("Right Color RGB", format.format(normRedR)  +", "+ format.format(normBlueR) +", "+ format.format(normBlueR));
         tele.addData("Left Color RGB", format.format(normRedL) + ", "+ format.format(normGreenL)+", "+format.format(normBlueL));
 
-        // Purple telemetry: red=[0.284,0.2944] green=[0.3268,0.3754] blue=[0.4273,0.4636]
-        double lowboundRedP = 0.25;
-        double lowboundGreenP = 0.29;
-        double lowboundBlueP = 0.39;
+        // Purple telemetry: yet to be done
+        double lowboundRedR = -1;
+        double lowboundGreenR = -1;
+        double lowboundBlueR = -1;
 
-        double highboundRedP = 0.33;
-        double highboundGreenP = 0.41;
-        double highboundBlueP = 0.50;
+        double highboundRedR = -1;
+        double highboundGreenR = -1;
+        double highboundBlueR = -1;
 
-        // Green telemetry: red=[0.3736,0.3913] green=[0.6127,0.6272] blue=[0.4064,0.4433]
-        double lowboundRedG = 0.34;
-        double lowboundGreenG = 0.58;
-        double lowboundBlueG = 0.37;
+        // Green telemetry: yet to be done
+        double lowboundRedB = -1;
+        double lowboundGreenB = -1;
+        double lowboundBlueB = -1;
 
-        double highboundRedG = 0.42;
-        double highboundGreenG = 0.66;
-        double highboundBlueG = 0.48;
+        double highboundRedB = -1;
+        double highboundGreenB = -1;
+        double highboundBlueB = -1;
 
-        // Empty telemetry: red=[0.3147,0.4539] green=[0.4431,0.5364] blue=[0.2804,0.3301]
+        // Yellow telemetry
+        double lowboundRedY = -1;
+        double lowboundGreenY = -1;
+        double lowboundBlueY = -1;
+
+        double highboundRedY = -1;
+        double highboundGreenY = -1;
+        double highboundBlueY = -1;
+
         // Empty excluded by: green too low for Green range, blue too low for Purple range
-        /*
-        if ((normRedR < highboundRedG && normRedR > lowboundRedG && normGreenR > lowboundGreenG && normGreenR < highboundGreenG && normBlue1 > lowboundBlueG && normBlue1 < highboundBlueG) || (normRed2 < highboundRedG && normRed2 > lowboundRedG && normGreen2 > lowboundGreenG && normGreen2 < highboundGreenG && normBlue2 > lowboundBlueG && normBlue2 < highboundBlueG)) {
-            tele.addData("Detected Color", "Green");
+
+        if ((normRedR < highboundRedR && normRedR > lowboundRedR && normGreenR > lowboundGreenR && normGreenR < highboundGreenR && normBlueL > lowboundBlueR && normBlueL < highboundBlueR) || (normRedL < highboundRedR && normRedL > lowboundRedR && normGreenL > lowboundGreenR && normGreenL < highboundGreenR && normBlueL > lowboundBlueR && normBlueL < highboundBlueR)) {
+            tele.addData("Detected Color", "Red");
             return color.RED;
         }
 
-         */
-        //else if ((normRed1 < highboundRedP && normRed1 > lowboundRedP && normGreen1 > lowboundGreenP && normGreen1 < highboundGreenP && normBlue1 < highboundBlueP && normBlue1 > lowboundBlueP) || (normRed2 < highboundRedP && normRed2 > lowboundRedP && normGreen2 > lowboundGreenP && normGreen2 < highboundGreenP && normBlue2 < highboundBlueP && normBlue2 > lowboundBlueP)) {
-            //tele.addData("Detected Color", "Purple");
-            //return color.BLUE;
-        //}
-        /*
+        else if ((normRedR < highboundRedB && normRedR > lowboundRedB && normGreenR > lowboundGreenB && normGreenR < highboundGreenB && normBlueR < highboundBlueB && normBlueR > lowboundBlueB) || (normRedL < highboundRedB && normRedL > lowboundRedB && normGreenL > lowboundGreenB && normGreenL < highboundGreenB && normBlueL < highboundBlueB && normBlueL > lowboundBlueB)) {
+            tele.addData("Detected Color", "Blue");
+            return color.BLUE;
+        }
+
+        else if ((normRedR < highboundRedY && normRedR > lowboundRedY && normGreenR > lowboundGreenY && normGreenR < highboundGreenY && normBlueR < highboundBlueY && normBlueR > lowboundBlueY) || (normRedL < highboundRedY && normRedL > lowboundRedY && normGreenL > lowboundGreenY && normGreenL < highboundGreenY && normBlueL < highboundBlueY && normBlueL > lowboundBlueY)) {
+            tele.addData("Detected Color", "Yellow");
+            return color.YELLOW;
+        }
+
         else {
             tele.addData("Detected Color", "Empty");
             return color.EMPTY;
         }
-        */
-        return color.EMPTY;
     }
 }

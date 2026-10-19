@@ -30,7 +30,9 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         modifier = (gamepad1.b) ? -0.8 : 1.0;
-        ourColorSensor.rgbToColor(telemetry);
+        ourColorSensor.detectColor(telemetry);
+        ourColorSensor.magazineTelemetry(telemetry);
+        telemetry.update();
 
         if (!gamepad1.a) {
             subsystemManager.drive.move(
@@ -51,6 +53,16 @@ public class Teleop extends OpMode {
             subsystemManager.drive.move(
                     xDpadDir, yDpadDir, gamepad1.right_stick_x * 0.8
             );
+        }
+
+        if (gamepad1.y) {
+            ourColorSensor.startIntake();
+            if (ourColorSensor.detectColor(telemetry) != OurColorSensor.color.EMPTY) {
+                ourColorSensor.RegisterBallIntake(ourColorSensor.detectColor(telemetry));
+            }
+        }
+        if (gamepad1.x) {
+            ourColorSensor.stopIntake();
         }
     }
 

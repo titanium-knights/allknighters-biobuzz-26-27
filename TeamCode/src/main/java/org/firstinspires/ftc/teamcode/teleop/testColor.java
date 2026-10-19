@@ -26,7 +26,7 @@ public class testColor extends OpMode {
 
     @Override
     public void loop() {
-        ourColorSensor.rgbToColor(telemetry);
+        ourColorSensor.detectColor(telemetry);
     }
 
     @Override
