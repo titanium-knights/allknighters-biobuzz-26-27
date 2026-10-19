@@ -11,7 +11,7 @@ public class MagazineBelt {
     public CRServo beltServo;
     public double loadOneBallRotations = -1; // placeholder; The amount of rotations (or fractions of rotations) it takes for one ball to be loaded
     public final int BELT_SERVO_SPEED = 111; //rpm
-    private boolean isRunning = false;
+    public boolean isRunning = false;
     ElapsedTime beltTimer = new ElapsedTime();
     public double timeToRotateBall = 1; //loadOneBallRotations/BELT_SERVO_SPEED
     public MagazineBelt(HardwareMap hmap){
