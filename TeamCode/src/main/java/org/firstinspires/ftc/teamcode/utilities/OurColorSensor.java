@@ -1,21 +1,26 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
+import android.icu.number.NumberFormatter;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 //it's called that cuz ColorSensor is a class apparently or something
 public class OurColorSensor {
-    public NormalizedColorSensor colorSensorF;
-    public NormalizedColorSensor colorSensorB;
+    public NormalizedColorSensor colorSensorR;
+    public NormalizedColorSensor colorSensorL;
     public color lastColor;
     public color currentColor;
     public Telemetry tele;
+    private NumberFormat format = new DecimalFormat("#0.0000");
     public enum color{
         BLUE,
         RED,
@@ -25,8 +30,8 @@ public class OurColorSensor {
 
     public LinkedList<color> loadedBalls = new LinkedList<>(); //
     public OurColorSensor(HardwareMap hmap, Telemetry tele){
-        colorSensorF = hmap.get(NormalizedColorSensor.class, "ColorSensorFront");
-        colorSensorB = hmap.get(NormalizedColorSensor.class, "ColorSensorBack");
+        colorSensorR = hmap.get(NormalizedColorSensor.class, "CSRight");
+        colorSensorL = hmap.get(NormalizedColorSensor.class, "CSLeft");
         this.tele = tele;
     }
     public void RegisterBallIntake(color intakedBallColor){
@@ -38,33 +43,33 @@ public class OurColorSensor {
         loadedBalls.add(color.EMPTY);
     }
     public color rgbToColor(Telemetry tele){
-        NormalizedRGBA colorsF = colorSensorF.getNormalizedColors();
-        NormalizedRGBA colorsB = colorSensorB.getNormalizedColors();
+        NormalizedRGBA colorsR = colorSensorR.getNormalizedColors();
+        NormalizedRGBA colorsL = colorSensorL.getNormalizedColors();
 
         float redR, blueR, greenR, alphaR;
-        redR = colorsF.red;
-        blueR = colorsF.blue;
-        greenR = colorsF.green;
-        alphaR = colorsF.alpha;
+        redR = colorsR.red;
+        blueR = colorsR.blue;
+        greenR = colorsR.green;
+        alphaR = colorsR.alpha;
 
         float redL, blueL, greenL, alphaL;
-        redL = colorsB.red;
-        blueL = colorsB.blue;
-        greenL = colorsB.green;
-        alphaL = colorsB.alpha;
+        redL = colorsL.red;
+        blueL = colorsL.blue;
+        greenL = colorsL.green;
+        alphaL = colorsL.alpha;
 
-        float normRedF, normBlueF, normGreenF;
-        normRedF = 10 * redR / alphaR;
-        normBlueF = 10 * blueR / alphaR;
-        normGreenF = 10 * greenR / alphaR;
+        float normRedR, normBlueR, normGreenR;
+        normRedR = 10 * redR / alphaR;
+        normBlueR = 10 * blueR / alphaR;
+        normGreenR = 10 * greenR / alphaR;
 
-        float normRedB, normBlueB, normGreenB;
-        normRedB = 10 * redL / alphaL;
-        normBlueB = 10 * blueL / alphaL;
-        normGreenB = 10 * greenL / alphaL;
+        float normRedL, normBlueL, normGreenL;
+        normRedL = 10 * redL / alphaL;
+        normBlueL = 10 * blueL / alphaL;
+        normGreenL = 10 * greenL / alphaL;
 
-        tele.addData("Front Color RGB", normRedF +""+ normGreenF +""+ normBlueF);
-        tele.addData("Back Color RGB", normRedB + ""+ normGreenB+""+normBlueB);
+        tele.addData("Right Color RGB", format.format(normRedR)  +", "+ format.format(normBlueR) +", "+ format.format(normBlueR));
+        tele.addData("Left Color RGB", format.format(normRedL) + ", "+ format.format(normGreenL)+", "+format.format(normBlueL));
 
         // Purple telemetry: red=[0.284,0.2944] green=[0.3268,0.3754] blue=[0.4273,0.4636]
         double lowboundRedP = 0.25;
@@ -87,7 +92,7 @@ public class OurColorSensor {
         // Empty telemetry: red=[0.3147,0.4539] green=[0.4431,0.5364] blue=[0.2804,0.3301]
         // Empty excluded by: green too low for Green range, blue too low for Purple range
         /*
-        if ((normRedF < highboundRedG && normRedF > lowboundRedG && normGreenF > lowboundGreenG && normGreenF < highboundGreenG && normBlue1 > lowboundBlueG && normBlue1 < highboundBlueG) || (normRed2 < highboundRedG && normRed2 > lowboundRedG && normGreen2 > lowboundGreenG && normGreen2 < highboundGreenG && normBlue2 > lowboundBlueG && normBlue2 < highboundBlueG)) {
+        if ((normRedR < highboundRedG && normRedR > lowboundRedG && normGreenR > lowboundGreenG && normGreenR < highboundGreenG && normBlue1 > lowboundBlueG && normBlue1 < highboundBlueG) || (normRed2 < highboundRedG && normRed2 > lowboundRedG && normGreen2 > lowboundGreenG && normGreen2 < highboundGreenG && normBlue2 > lowboundBlueG && normBlue2 < highboundBlueG)) {
             tele.addData("Detected Color", "Green");
             return color.RED;
         }
