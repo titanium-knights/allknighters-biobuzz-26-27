@@ -3,14 +3,19 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.utilities.Limelight;
 import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
 import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
+import org.firstinspires.ftc.teamcode.utilities.OurColorSensor;
 import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
+
+//Wifi Password: FTCTitaniumA15887!
 
 @TeleOp(name = "TeleOp")
 public class Teleop extends OpMode {
     private SubsystemManager subsystemManager;
     private double modifier;
+    private OurColorSensor ourColorSensor;
 
     @Override
     public void init() {
@@ -18,13 +23,14 @@ public class Teleop extends OpMode {
         modifier = 1.0;
         telemetry.addData("Drive", "Ready");
         telemetry.update();
-        subsystemManager.linearSlides.checkEquivalenceAndAdjust();
+         ourColorSensor = new OurColorSensor(hardwareMap, telemetry);
 
     }
 
     @Override
     public void loop() {
         modifier = (gamepad1.b) ? -0.8 : 1.0;
+        ourColorSensor.rgbToColor(telemetry);
 
         if (!gamepad1.a) {
             subsystemManager.drive.move(
@@ -46,10 +52,6 @@ public class Teleop extends OpMode {
                     xDpadDir, yDpadDir, gamepad1.right_stick_x * 0.8
             );
         }
-        if (gamepad1.right_trigger==1){
-            subsystemManager.magazineBelt.startCycle();
-        }
-        subsystemManager.magazineBelt.update();
     }
 
     @Override
