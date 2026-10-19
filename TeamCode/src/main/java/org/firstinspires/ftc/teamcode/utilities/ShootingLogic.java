@@ -16,10 +16,10 @@ public class ShootingLogic {
     public boolean isShooting = false;
     public boolean flywheelSpinning;
     private final Telemetry tele;
-    public ShootingLogic(HardwareMap hMap, Telemetry tele, OurColorSensor colorSensor){
+    public ShootingLogic(HardwareMap hMap, Telemetry tele, OurColorSensor colorSensor, MagazineBelt magazineBelt){
         shootMotor = hMap.get(DcMotor.class, "ShootMotor");
         voltageSensor = hMap.get(VoltageSensor.class, "VoltageSensor");
-        magazineBelt = new MagazineBelt(hMap);
+        this.magazineBelt = magazineBelt;
         this.colorSensor = colorSensor;
         flywheel = new Flywheel(shootMotor, tele, voltageSensor);
         this.tele = tele;
