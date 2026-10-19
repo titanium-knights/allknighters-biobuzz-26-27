@@ -18,6 +18,7 @@ public class Teleop extends OpMode {
         modifier = 1.0;
         telemetry.addData("Drive", "Ready");
         telemetry.update();
+        subsystemManager.linearSlides.checkEquivalenceAndAdjust();
 
     }
 
@@ -45,6 +46,10 @@ public class Teleop extends OpMode {
                     xDpadDir, yDpadDir, gamepad1.right_stick_x * 0.8
             );
         }
+        if (gamepad1.right_trigger==1){
+            subsystemManager.magazineBelt.startCycle();
+        }
+        subsystemManager.magazineBelt.update();
     }
 
     @Override
