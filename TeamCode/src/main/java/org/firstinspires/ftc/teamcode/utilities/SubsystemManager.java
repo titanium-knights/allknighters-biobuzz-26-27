@@ -17,13 +17,13 @@ public class SubsystemManager {
     private final HardwareMap hardwareMap;
     private final Telemetry telemetry;
     private Limelight limeLight;
-    private Intake intake;
-    private LinearSlides linearSlides;
-    private MagazineAngle magazineAngle;
-    private MagazineBelt magazineBelt;
-    private MagazineServos magazineServos;
-    private OurColorSensor colorSensors;
-    private OuttakeHood outtakeHood;
+    public Intake intake;
+    public LinearSlides linearSlides;
+    public MagazineAngle magazineAngle;
+    public MagazineBelt magazineBelt;
+    public MagazineServos magazineServos;
+    public OurColorSensor colorSensors;
+    public OuttakeHood outtakeHood;
 
     public SubsystemManager(HardwareMap hmap, Telemetry telemetry) {
         drive = new SimpleMecanumDrive(hmap);
