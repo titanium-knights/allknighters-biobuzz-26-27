@@ -24,6 +24,7 @@ public class SubsystemManager {
     public MagazineServos magazineServos;
     public OurColorSensor colorSensors;
     public OuttakeHood outtakeHood;
+    public ShootingLogic shootingLogic;
 
     public SubsystemManager(HardwareMap hmap, Telemetry telemetry) {
         drive = new SimpleMecanumDrive(hmap);
@@ -37,6 +38,7 @@ public class SubsystemManager {
         magazineServos = new MagazineServos(hmap);
         colorSensors = new OurColorSensor(hmap, telemetry);
         outtakeHood = new OuttakeHood(hmap);
+        shootingLogic = new ShootingLogic(hmap, telemetry, colorSensors, magazineBelt, outtakeHood);
     }
 
     public Limelight getLimelight() {
