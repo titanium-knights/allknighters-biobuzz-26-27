@@ -5,14 +5,16 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
-    public Servo armServo;
-    public CRServo intakeServo;;
+    public Servo armServoL;
+    public Servo armServoR;
+    public CRServo intakeServo;
 
     double openPos = -1; // Placeholder for the servo position for the arm
     double closePos = -1; // Placeholder for the servo position for the intake
     double power = 0.9; // Placeholder
     public Intake(HardwareMap hmap){
-        armServo = hmap.get(Servo.class, "Arm Servo");
+        armServoL = hmap.get(Servo.class, "ArmServoLeft");
+        armServoR = hmap.get(Servo.class, "ArmServoRight");
         intakeServo = hmap.get(CRServo.class, "Intake Servo");
     }
 
@@ -24,10 +26,12 @@ public class Intake {
     }
 
     public void openIntake(){
-        armServo.setPosition(openPos);
+        armServoL.setPosition(openPos);
+        armServoR.setPosition(openPos);
     }
 
     public void closeIntake(){
-        armServo.setPosition(closePos);
+        armServoL.setPosition(closePos);
+        armServoR.setPosition(closePos);
     }
 }
