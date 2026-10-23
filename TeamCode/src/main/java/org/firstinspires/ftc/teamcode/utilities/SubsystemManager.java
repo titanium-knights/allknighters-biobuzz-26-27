@@ -32,8 +32,8 @@ public class SubsystemManager {
         this.telemetry = telemetry;
         limeLight = new Limelight(hmap, telemetry);
         intake = new Intake(hmap);
-        linearSlides = new LinearSlides(hmap,telemetry);
         magazineAngle = new MagazineAngle(hmap);
+        linearSlides = new LinearSlides(hmap,telemetry,magazineAngle);
         magazineBelt = new MagazineBelt(hmap);
         magazineServos = new MagazineServos(hmap);
         colorSensors = new OurColorSensor(hmap, telemetry);
