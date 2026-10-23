@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.utilities;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class CONFIG {
+  public static final String LIMELIGHT = "limelight";
+
   public static final String FRONT_LEFT = "fl";
   public static final DcMotorSimple.Direction FL_DIRECTION = DcMotorSimple.Direction.FORWARD;
 
