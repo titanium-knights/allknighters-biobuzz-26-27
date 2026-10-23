@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
+import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
 import org.firstinspires.ftc.teamcode.utilities.SimpleMecanumDrive;
 
 @Autonomous(name = "AutoPath", group = "Autonomous")
@@ -25,6 +27,8 @@ public class AutoPath extends LinearOpMode {
     private final Pose point2 = poseFactory.of(9, 39, 0);
     private final Pose point3 = poseFactory.of(9, 48, 0);
     private final Pose point4 = poseFactory.of(9, 93, 0);
+
+    private LinearSlides linear ;
 
     public void autonomousPathUpdate() {
         switch (pathState) {
@@ -110,6 +114,8 @@ public class AutoPath extends LinearOpMode {
     public static class MecanumAuton extends LinearOpMode {
 
         private SimpleMecanumDrive drive;;
+        private MagazineAngle magazineAngle;
+        private LinearSlides linearSlides;
 
         private void moveFor(double x, double y, double turn, long milliseconds)
                 throws InterruptedException {
@@ -128,11 +134,22 @@ public class AutoPath extends LinearOpMode {
         public void runOpMode() throws InterruptedException {
 
             drive = new SimpleMecanumDrive(hardwareMap);
+            magazineAngle = new MagazineAngle(hardwareMap);
+            linearSlides = new LinearSlides(hardwareMap, telemetry, magazineAngle);
 
             telemetry.addData("Status", "Ready");
+            telemetry.addData("IS THE START SWITCH HIT", linearSlides.isStartLimitSwitchHit());
             telemetry.update();
 
-            waitForStart();
+            if(linearSlides.isStartLimitSwitchHit()){
+                waitForStart();
+            } else {stop();}
+
+            magazineAngle.setStartAngle();
+            linearSlides.toIntake();
+            while(linearSlides.slidesRunning){
+                linearSlides.isLimitSwitchHitAndStopIfSo();
+            }
 
             if (!opModeIsActive()) return;
 
