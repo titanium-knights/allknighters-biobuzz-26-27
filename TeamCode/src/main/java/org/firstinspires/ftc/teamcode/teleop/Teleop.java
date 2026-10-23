@@ -79,13 +79,11 @@ public class Teleop extends OpMode {
         }
 
         // linear slides
-        linearSlides.update();
         boolean stepUp = gamepad2.left_bumper && !lastLeftBumper;
         boolean stepDown = gamepad2.right_bumper && !lastRightBumper;
         lastLeftBumper = gamepad2.left_bumper;
         lastRightBumper = gamepad2.right_bumper;
 
-            // still need to define level stuff
         if (!linearSlides.isSlidesRunning() && stepUp != stepDown) {
             int level = linearSlides.getTargetLevel();
             if (stepUp) {
@@ -93,7 +91,7 @@ public class Teleop extends OpMode {
                 else if (level==1) linearSlides.toShoot();
             } else {
                 if (level==2) linearSlides.toIntake();
-                else if (level==1) linearSlides.toStart();
+                else if (level==1) linearSlides.toFlowerOuttake();
             }
         }
 
@@ -113,7 +111,7 @@ public class Teleop extends OpMode {
         lastFlapButton = gamepad2.x;
 
         // magazine servos and intake
-        if (linearSlides.isAtTopPosition() || linearSlides.getTargetLevel() == 2 || linearSlides.isSlidesRunning()) {
+        if (linearSlides.isAtCorrectPositionToShoot() || linearSlides.getTargetLevel() == 2 || linearSlides.isSlidesRunning()) {
             intake.stopIntake();
             magazineServos.stopIntake();
         } else if (gamepad1.right_trigger > 0.5) {
@@ -131,16 +129,16 @@ public class Teleop extends OpMode {
         }
 
         // magazine angle
-        if (linearSlides.isAtTopPosition()) {
+        if (linearSlides.isAtCorrectPositionToShoot()) {
             magazineAngle.setShootAngle();
         } else {
             magazineAngle.setStartAngle();
         }
-        flywheel.setShooterOn(linearSlides.isAtTopPosition());
+        flywheel.setShooterOn(linearSlides.isAtCorrectPositionToShoot());
         outtake.update();
 
         telemetry.addData("slide level: ", linearSlides.getTargetLevel());
-        telemetry.addData("is slide at top: ", linearSlides.isAtTopPosition());
+        telemetry.addData("is slide at top: ", linearSlides.isAtCorrectPositionToShoot());
         telemetry.addData("outtake flap: ", pollenFlapSelected ? "Pollen" : "Nectar");
         telemetry.update();
     }
@@ -151,7 +149,6 @@ public class Teleop extends OpMode {
             subsystemManager.drive.stop();
             subsystemManager.intake.stopIntake();
             subsystemManager.magazineServos.stopIntake();
-            subsystemManager.linearSlides.stop();
             flywheel.setShooterOn(false);
             outtake.update();
         }

@@ -75,7 +75,7 @@ public class LinearSlides {
         }
     }
     public boolean isAtCorrectPositionToShoot(){
-        if (slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition() && targetLevel == 2){
+        if (slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition() && targetLevel == 2 && slidesRunning){
             slideMotorRight.setPower(0);
             slideMotorLeft.setPower(0);
             checkEquivalenceAndAdjust();
@@ -84,6 +84,18 @@ public class LinearSlides {
             return true;
         }
         return false;
+    }
+
+    public boolean checkIfAtShoot(){
+        if (slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition() && targetLevel == 2){
+            slideMotorRight.setPower(0);
+            slideMotorLeft.setPower(0);
+            checkEquivalenceAndAdjust();
+            slidesRunning = false;
+            magazineAngle.setShootAngle();
+            return true;
+        }
+        return slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition();
     }
 
     public boolean isSlidesRunning(){return slidesRunning;}
