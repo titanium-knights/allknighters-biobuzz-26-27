@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.utilities;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -8,41 +9,83 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class LinearSlides {
     public DcMotor slideMotorRight; //Baseline. in the case of unevenness, left motor adjusts to right motor pos
     public DcMotor slideMotorLeft;
+    public DigitalChannel startLimitSwitch;
+    public DigitalChannel intakeLimitSwitch;
     private Telemetry tele;
 
     final int gameStartPos = -1; // Placeholder for the servo position of the slide when the game starts
     final int gameStartPosReal = -1; // Placeholder for the servo position of the slide after starting but like actually
     final int flowerOuttake = -1; //Placeholder for the position when outtaking to the flower
     final int upPos = -1; //Placeholder for the position when shooting;
+    public int targetLevel = 0; //0 is start, 1 is intake, 2 is shoot
+    public boolean hitLimitSwitch = false;
+    public boolean slidesRunning = false;
 
     public LinearSlides(HardwareMap hmap, Telemetry tele){
         slideMotorRight = hmap.get(DcMotor.class, "Slide Motor 1");
         slideMotorLeft = hmap.get(DcMotor.class, "Slide Motor 2");
+        startLimitSwitch = hmap.get(DigitalChannel.class, "StartLS");
+        intakeLimitSwitch = hmap.get(DigitalChannel.class, "IntakeLS");
         this.tele = tele;
     }
 
     public void checkEquivalenceAndAdjust(){
-        int difference = slideMotorLeft.getCurrentPosition() - slideMotorRight.getCurrentPosition();
+        int difference = slideMotorRight.getCurrentPosition() - slideMotorLeft.getCurrentPosition();
         if (difference>=1){
-            slideMotorRight.setTargetPosition(slideMotorLeft.getCurrentPosition());
+            slideMotorLeft.setTargetPosition(slideMotorRight.getCurrentPosition());
         }
     }
+
+
     public boolean checkStartPosIsRight(){
-        boolean out = (slideMotorLeft.getCurrentPosition() == slideMotorRight.getCurrentPosition() && (slideMotorLeft.getCurrentPosition() == gameStartPos));
+        boolean out = hitLimitSwitch;
         tele.addData("Slides are at correct Positions", out);
         return out;
     }
+    public boolean isIntakeSwitchHit(){
+        boolean out = intakeLimitSwitch.getState();
+        if (out){hitLimitSwitch = true;}
+        return out;
+    }
+    public boolean isStartLimitSwitchHit(){
+        boolean out = intakeLimitSwitch.getState();
+        if(out){hitLimitSwitch = true;}
+        return out;
+    }
 
-    public void toUpPos(){
+    public void toShoot(){
         slideMotorRight.setTargetPosition(upPos);
         slideMotorLeft.setTargetPosition(-upPos);
+        slidesRunning = true;
     }
+    public void isLimitSwitchHit(){
+        if (isIntakeSwitchHit() && slidesRunning && (targetLevel == 1)){
+            slideMotorRight.setPower(0);
+            slideMotorLeft.setPower(0);
+            checkEquivalenceAndAdjust();
+            slidesRunning = false;
+        }
+    }
+    public boolean isAtCorrectPosition(){
+        if (slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition()){
+            slideMotorRight.setPower(0);
+            slideMotorLeft.setPower(0);
+            checkEquivalenceAndAdjust();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isSlidesRunning(){return slidesRunning;}
+
     public void toFlowerOuttake(){
         slideMotorRight.setTargetPosition(flowerOuttake);
         slideMotorLeft.setTargetPosition(-flowerOuttake);
+        slidesRunning = true;
     }
-    public void toGameStartPosReal(){
+    public void toIntake(){
         slideMotorRight.setTargetPosition(gameStartPosReal);
         slideMotorLeft.setTargetPosition(-gameStartPosReal);
+        slidesRunning= true;
     }
 }
