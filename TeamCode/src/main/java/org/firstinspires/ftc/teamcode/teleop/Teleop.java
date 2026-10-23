@@ -140,6 +140,7 @@ public class Teleop extends OpMode {
         telemetry.addData("slide level: ", linearSlides.getTargetLevel());
         telemetry.addData("is slide at top: ", linearSlides.isAtCorrectPositionToShoot());
         telemetry.addData("outtake flap: ", pollenFlapSelected ? "Pollen" : "Nectar");
+
         telemetry.update();
     }
 
