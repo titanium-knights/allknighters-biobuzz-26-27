@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.utilities.SimpleMecanumDrive;
 
 @Autonomous(name = "AutoPath", group = "Autonomous")
 public class AutoPath extends LinearOpMode {
@@ -103,5 +104,50 @@ public class AutoPath extends LinearOpMode {
 
     public Path path4() {
         return line(point3, point4).linear(Math.toRadians(0), Math.toRadians(0));
+    }
+
+    @Autonomous
+    public static class MecanumAuton extends LinearOpMode {
+
+        private SimpleMecanumDrive drive;;
+
+        private void moveFor(double x, double y, double turn, long milliseconds)
+                throws InterruptedException {
+
+            drive.move(x, y, turn);
+
+            try {
+                sleep(milliseconds);
+            } finally {
+                drive.stop();
+            }
+        }
+
+
+        @Override
+        public void runOpMode() throws InterruptedException {
+
+            drive = new SimpleMecanumDrive(hardwareMap);
+
+            telemetry.addData("Status", "Ready");
+            telemetry.update();
+
+            waitForStart();
+
+            if (!opModeIsActive()) return;
+
+
+            moveFor(0, 0.3, 0, 500);
+
+            if (!opModeIsActive()) return;
+
+
+            moveFor(0.3, 0, 0, 500);
+
+            if (!opModeIsActive()) return;
+
+
+            moveFor(0, 0, 0.3, 400);
+        }
     }
 }
