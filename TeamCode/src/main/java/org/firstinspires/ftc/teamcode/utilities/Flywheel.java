@@ -242,10 +242,6 @@ public class Flywheel {
         return shooterOn;
     }
 
-    public void toggleShooterOn() {
-        setShooterOn(!shooterOn);
-    }
-
     public double getCurrentRPM() {
         return currentRpm;
     }

@@ -12,8 +12,8 @@ public class MagazineAngle {
         angleServo = hmap.get(Servo.class, "Magazine Angle Servo");
     }
     public void setAngle(double angle){
-        angleServo.setPosition(angle);
+        if (angle >= 0 && angle <= 1) angleServo.setPosition(angle);
     }
-    public void setStartAngle(){angleServo.setPosition(startAngle);}
-    public void setShootAngle(){angleServo.setPosition(shootAngle);}
+    public void setStartAngle(){setAngle(startAngle);}
+    public void setShootAngle(){setAngle(shootAngle);}
 }
