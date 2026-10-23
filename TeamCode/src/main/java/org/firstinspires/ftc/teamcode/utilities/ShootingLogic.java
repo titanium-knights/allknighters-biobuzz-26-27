@@ -35,11 +35,17 @@ public class ShootingLogic {
         } else {tele.addData("SHOOTER NOT ON!!!", "SHOOTER NOT ON");}
     }
     public void updateDuringShoot(){
-        if (flywheel.isAtSpeed() && !magazineBelt.isRunning && shotBallCount<4){
+        if (flywheel.isAtSpeed() && !magazineBelt.isRunning && shotBallCount<4 && isShooting){
+            if(colorSensor.loadedBalls.getFirst() == OurColorSensor.color.YELLOW){
+                outtakeHood.flapPollen();
+            } else{
+                outtakeHood.flapNectar();
+            }
             shotBallCount++;
             magazineBelt.startCycle();
         } else if (shotBallCount>=4){
             isShooting = false;
+            shotBallCount = 0;
         }
     }
     public double setTargetRPM(double targetRPM){
