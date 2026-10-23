@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utilities.MagazineBelt;
 import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
@@ -12,13 +13,15 @@ public class testservos extends OpMode {
     //private SubsystemManager subsystemManager;
     MagazineBelt magazineBelt;
     private double modifier;
-    private CRServo servo;
+    private CRServo beltServo;
+
+    private Servo outtakeHood;
 
     @Override
     public void init(){
         magazineBelt = new MagazineBelt(hardwareMap);
         //subsystemManager = new SubsystemManager(hardwareMap, telemetry);
-        servo = hardwareMap.get(CRServo.class, "Belt Servo");
+        beltServo = hardwareMap.get(CRServo.class, "Belt Servo");
     }
 
     @Override

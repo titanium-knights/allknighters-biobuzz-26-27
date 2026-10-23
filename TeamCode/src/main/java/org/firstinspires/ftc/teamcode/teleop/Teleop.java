@@ -55,15 +55,21 @@ public class Teleop extends OpMode {
             );
         }
 
-        if (gamepad1.y) {
+        if (gamepad1.right_trigger > 0.5) {
             ourColorSensor.startIntake();
             if (ourColorSensor.detectColor(telemetry) != OurColorSensor.color.EMPTY) {
                 ourColorSensor.RegisterBallIntake(ourColorSensor.detectColor(telemetry));
             }
-        }
-        if (gamepad1.x) {
+        } else {
             ourColorSensor.stopIntake();
         }
+        /*
+        if (gamepad2.x) {
+            ourColorSensor.
+        } else {
+            ourColorSensor.s
+        }
+         */
     }
 
     @Override

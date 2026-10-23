@@ -39,8 +39,8 @@ public class OurColorSensor {
     public OurColorSensor(HardwareMap hmap, Telemetry tele){
         colorSensorR = hmap.get(NormalizedColorSensor.class, "CSRight");
         colorSensorL = hmap.get(NormalizedColorSensor.class, "CSLeft");
-        insideServoR = hmap.get(CRServo.class, "ServoR");
-        insideServoL = hmap.get(CRServo.class, "ServoL");
+        //insideServoR = hmap.get(CRServo.class, "ServoR");
+        //insideServoL = hmap.get(CRServo.class, "ServoL");
         this.tele = tele;
     }
     public void magazineTelemetry(Telemetry tele) {
@@ -62,7 +62,7 @@ public class OurColorSensor {
         loadedBalls.pop();
         loadedBalls.add(color.EMPTY);
     }
-    public color detectColor(Telemetry tele){
+    public color detectColor(Telemetry tele) {
         NormalizedRGBA colorsR = colorSensorR.getNormalizedColors();
         NormalizedRGBA colorsL = colorSensorL.getNormalizedColors();
 
@@ -88,9 +88,9 @@ public class OurColorSensor {
         normBlueL = 10 * blueL / alphaL;
         normGreenL = 10 * greenL / alphaL;
 
-        tele.addData("Right Color RGB", format.format(normRedR)  +", "+ format.format(normBlueR) +", "+ format.format(normBlueR));
-        tele.addData("Left Color RGB", format.format(normRedL) + ", "+ format.format(normGreenL)+", "+format.format(normBlueL));
-
+        tele.addData("Right Color RGB", format.format(normRedR) + ", " + format.format(normBlueR) + ", " + format.format(normBlueR));
+        tele.addData("Left Color RGB", format.format(normRedL) + ", " + format.format(normGreenL) + ", " + format.format(normBlueL));
+    /*
         // Purple telemetry: yet to be done
         double lowboundRedR = -1;
         double lowboundGreenR = -1;
@@ -139,5 +139,8 @@ public class OurColorSensor {
             tele.addData("Detected Color", "Empty");
             return color.EMPTY;
         }
+
+     */
+        return color.EMPTY;
     }
 }
