@@ -62,4 +62,8 @@ public class ShootingLogic {
         return flywheel.getTargetRPM();
     }
 
+    public Flywheel getFlywheel() {
+        return flywheel;
+    }
+
 }

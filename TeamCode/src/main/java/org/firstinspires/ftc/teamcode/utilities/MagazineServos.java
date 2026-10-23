@@ -15,4 +15,8 @@ public class MagazineServos {
     public void run() {
         subIntakeServo.setPower(-power);
     }
+
+    public void outtake() {
+        subIntakeServo.setPower(power);
+    }
 }

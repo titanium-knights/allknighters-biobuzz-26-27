@@ -25,13 +25,21 @@ public class Intake {
         intakeServo.setPower(-power);
     }
 
+    public void outtake() {
+        intakeServo.setPower(power);
+    }
+
     public void openIntake(){
-        armServoL.setPosition(openPos);
-        armServoR.setPosition(openPos);
+        if (openPos >= 0 && openPos <= 1) {
+            armServoL.setPosition(openPos);
+            armServoR.setPosition(openPos);
+        }
     }
 
     public void closeIntake(){
-        armServoL.setPosition(closePos);
-        armServoR.setPosition(closePos);
+        if (closePos >= 0 && closePos <= 1) {
+            armServoL.setPosition(closePos);
+            armServoR.setPosition(closePos);
+        }
     }
 }

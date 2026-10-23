@@ -33,7 +33,7 @@ public class SubsystemManager {
         limeLight = new Limelight(hmap, telemetry);
         intake = new Intake(hmap);
         magazineAngle = new MagazineAngle(hmap);
-        linearSlides = new LinearSlides(hmap,telemetry,magazineAngle);
+        linearSlides = new LinearSlides(hmap, telemetry, magazineAngle);
         magazineBelt = new MagazineBelt(hmap);
         magazineServos = new MagazineServos(hmap);
         colorSensors = new OurColorSensor(hmap, telemetry);

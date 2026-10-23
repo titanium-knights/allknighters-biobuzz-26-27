@@ -14,9 +14,9 @@ public class OuttakeHood {
     }
 
     public void flapNectar(){
-        hoodServo.setPosition(flapNectar);
+        if (flapNectar >= 0 && flapNectar <= 1) hoodServo.setPosition(flapNectar);
     }
     public void flapPollen(){
-        hoodServo.setPosition(flapPollen);
+        if (flapPollen >= 0 && flapPollen <= 1) hoodServo.setPosition(flapPollen);
     }
 }
