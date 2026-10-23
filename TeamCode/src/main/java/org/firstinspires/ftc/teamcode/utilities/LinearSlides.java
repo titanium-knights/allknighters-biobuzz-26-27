@@ -54,7 +54,7 @@ public class LinearSlides {
         return out;
     }
     public boolean isStartLimitSwitchHit(){
-        boolean out = intakeLimitSwitch.getState();
+        boolean out = startLimitSwitch.getState();
         if(out){hitLimitSwitch = true;}
         return out;
     }

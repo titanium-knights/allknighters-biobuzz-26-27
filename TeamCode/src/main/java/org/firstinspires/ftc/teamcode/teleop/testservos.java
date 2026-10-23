@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
+import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
 import org.firstinspires.ftc.teamcode.utilities.MagazineBelt;
 import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
 @TeleOp(name = "TestServos")
@@ -16,6 +17,7 @@ public class testservos extends OpMode {
     private double modifier;
     private CRServo beltServo;
     private LinearSlides linearSlides;
+    private MagazineAngle magazineAngle;
 
     private Servo outtakeHood;
 
@@ -24,7 +26,7 @@ public class testservos extends OpMode {
         magazineBelt = new MagazineBelt(hardwareMap);
         //subsystemManager = new SubsystemManager(hardwareMap, telemetry);
         beltServo = hardwareMap.get(CRServo.class, "Belt Servo");
-        linearSlides = new LinearSlides(hardwareMap, telemetry);
+        linearSlides = new LinearSlides(hardwareMap, telemetry, magazineAngle);
     }
 
     @Override
@@ -48,6 +50,7 @@ public class testservos extends OpMode {
         }
         telemetry.addData("rightMotor Position", linearSlides.slideMotorRight.getCurrentPosition());
         telemetry.addData("Right motor target", linearSlides.slideMotorRight.getTargetPosition());
+        telemetry.addData("IS AT TRUE START?", linearSlides.isStartLimitSwitchHit());
     }
 
 
