@@ -14,6 +14,6 @@ public class MagazineAngle {
     public void setAngle(double angle){
         angleServo.setPosition(angle);
     }
-    public void setStartAngle(double angle){angleServo.setPosition(startAngle);}
-    public void setShootAngle(double angle){angleServo.setPosition(shootAngle);}
+    public void setStartAngle(){angleServo.setPosition(startAngle);}
+    public void setShootAngle(){angleServo.setPosition(shootAngle);}
 }

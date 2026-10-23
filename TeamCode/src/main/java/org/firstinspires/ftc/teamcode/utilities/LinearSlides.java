@@ -12,7 +12,7 @@ public class LinearSlides {
     public DigitalChannel startLimitSwitch;
     public DigitalChannel intakeLimitSwitch;
     private Telemetry tele;
-
+    private MagazineAngle magazineAngle;
     final int gameStartPos = -1; // Placeholder for the servo position of the slide when the game starts
     final int gameStartPosReal = -1; // Placeholder for the servo position of the slide after starting but like actually
     final int flowerOuttake = -1; //Placeholder for the position when outtaking to the flower
@@ -21,12 +21,14 @@ public class LinearSlides {
     public boolean hitLimitSwitch = false;
     public boolean slidesRunning = false;
 
-    public LinearSlides(HardwareMap hmap, Telemetry tele){
+
+    public LinearSlides(HardwareMap hmap, Telemetry tele, MagazineAngle magazineAngle){
         slideMotorRight = hmap.get(DcMotor.class, "Slide Motor 1");
         slideMotorLeft = hmap.get(DcMotor.class, "Slide Motor 2");
         startLimitSwitch = hmap.get(DigitalChannel.class, "StartLS");
         intakeLimitSwitch = hmap.get(DigitalChannel.class, "IntakeLS");
         this.tele = tele;
+        this.magazineAngle = magazineAngle;
     }
 
     public void checkEquivalenceAndAdjust(){
@@ -34,6 +36,10 @@ public class LinearSlides {
         if (difference>=1){
             slideMotorLeft.setTargetPosition(slideMotorRight.getCurrentPosition());
         }
+    }
+
+    public int getTargetLevel(){
+        return targetLevel;
     }
 
 
@@ -56,21 +62,25 @@ public class LinearSlides {
     public void toShoot(){
         slideMotorRight.setTargetPosition(upPos);
         slideMotorLeft.setTargetPosition(-upPos);
+        targetLevel = 2;
         slidesRunning = true;
     }
-    public void isLimitSwitchHit(){
+    public void isLimitSwitchHitAndStopIfSo(){
         if (isIntakeSwitchHit() && slidesRunning && (targetLevel == 1)){
             slideMotorRight.setPower(0);
             slideMotorLeft.setPower(0);
             checkEquivalenceAndAdjust();
+            magazineAngle.setStartAngle();
             slidesRunning = false;
         }
     }
-    public boolean isAtCorrectPosition(){
-        if (slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition()){
+    public boolean isAtCorrectPositionToShoot(){
+        if (slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition() && targetLevel == 2){
             slideMotorRight.setPower(0);
             slideMotorLeft.setPower(0);
             checkEquivalenceAndAdjust();
+            slidesRunning = false;
+            magazineAngle.setShootAngle();
             return true;
         }
         return false;
@@ -86,6 +96,7 @@ public class LinearSlides {
     public void toIntake(){
         slideMotorRight.setTargetPosition(gameStartPosReal);
         slideMotorLeft.setTargetPosition(-gameStartPosReal);
+        targetLevel = 1;
         slidesRunning= true;
     }
 }
