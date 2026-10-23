@@ -1,0 +1,5 @@
+package org.firstinspires.ftc.teamcode.auton;
+
+public class test {
+    /* test */
+}
