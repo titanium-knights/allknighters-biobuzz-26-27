@@ -103,12 +103,16 @@ public class Teleop extends OpMode {
         }
 
         // hood flap
+        /*
         if (gamepad2.x && !lastFlapButton) {
             pollenFlapSelected = !pollenFlapSelected;
             if (pollenFlapSelected) outtakeHood.flapPollen();
             else outtakeHood.flapNectar();
         }
         lastFlapButton = gamepad2.x;
+         */
+        //hood flap (pollen only)
+        outtakeHood.flapPollen();
 
         // magazine servos and intake
         if (linearSlides.isAtCorrectPositionToShoot() || linearSlides.getTargetLevel() == 2 || linearSlides.isSlidesRunning()) {
@@ -129,12 +133,13 @@ public class Teleop extends OpMode {
         }
 
         // magazine angle
-        if (linearSlides.isAtCorrectPositionToShoot()) {
+        if (linearSlides.getTargetLevel() == 2 && !linearSlides.isSlidesRunning()) {
             magazineAngle.magAngleForward();
+            flywheel.setTargetRPM(2000);
         } else {
             magazineAngle.magAngleBackward();
+            flywheel.setTargetRPM(0);
         }
-        flywheel.setShooterOn(linearSlides.isAtCorrectPositionToShoot());
         outtake.update();
 
         telemetry.addData("slide level: ", linearSlides.getTargetLevel());
