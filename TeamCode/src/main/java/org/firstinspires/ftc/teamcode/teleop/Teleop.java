@@ -43,7 +43,6 @@ public class Teleop extends OpMode {
         outtakeHood = subsystemManager.outtakeHood;
         linearSlides = subsystemManager.linearSlides;
         outtake = subsystemManager.shootingLogic;
-        flywheel = outtake.getFlywheel();
         outtakeHood.flapNectar();
         telemetry.addData("Drive", "Ready");
         telemetry.update();
@@ -134,7 +133,7 @@ public class Teleop extends OpMode {
         } else {
             magazineAngle.magAngleBackward();
         }
-        flywheel.setShooterOn(linearSlides.isAtCorrectPositionToShoot());
+        outtake.setSpinning(linearSlides.isAtCorrectPositionToShoot());
         outtake.update();
 
         telemetry.addData("slide level: ", linearSlides.getTargetLevel());
@@ -150,7 +149,7 @@ public class Teleop extends OpMode {
             subsystemManager.drive.stop();
             subsystemManager.intake.stopIntake();
             subsystemManager.magazineServos.stopIntake();
-            flywheel.setShooterOn(false);
+            outtake.setSpinning(false);
             outtake.update();
         }
     }

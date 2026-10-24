@@ -22,11 +22,11 @@ public class Intake {
         intakeServo.setPower(0);
     }
     public void run() {
-        intakeServo.setPower(-power);
+        intakeServo.setPower(power);
     }
 
     public void outtake() {
-        intakeServo.setPower(power);
+        intakeServo.setPower(-power);
     }
 
     public void openIntake(){

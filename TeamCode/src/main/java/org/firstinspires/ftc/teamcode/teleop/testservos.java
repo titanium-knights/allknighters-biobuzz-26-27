@@ -21,6 +21,12 @@ public class testservos extends OpMode {
 
     private Servo outtakeHood;
 
+    private boolean lastRB = false;
+    private boolean lastLB = false;
+
+    private boolean lastUp = false;
+    private boolean lastDown = false;
+
     @Override
     public void init(){
         magazineBelt = new MagazineBelt(hardwareMap);
@@ -35,23 +41,27 @@ public class testservos extends OpMode {
         if(gamepad1.dpad_right) {
             magazineBelt.startCycle();
         }
-
         magazineBelt.update();
-        if (gamepad1.left_bumper){
-            linearSlides.toIntake();
-        }
-        if (gamepad1.right_bumper){
-            linearSlides.toShoot();
-        }
-        if(linearSlides.getTargetLevel()==1){
-            linearSlides.isLimitSwitchHitAndStopIfSo();
-        } else if (linearSlides.getTargetLevel()==2){
-            linearSlides.isAtCorrectPositionToShoot();
-        }
+        boolean rb = gamepad1.right_bumper;
+        boolean lb = gamepad1.left_bumper;
+        if (rb && !lastRB) linearSlides.levelUp();
+        if (lb && !lastLB) linearSlides.levelDown();
+        lastRB = rb;
+        lastLB = lb;
+        linearSlides.update();
+        telemetry.addData("Slide R power", linearSlides.slideMotorRight.getPower());
+        telemetry.addData("Slide L power", linearSlides.slideMotorLeft.getPower());
+        telemetry.addData("Slide level", linearSlides.levelIndex);
         telemetry.addData("rightMotor Position", linearSlides.slideMotorRight.getCurrentPosition());
         telemetry.addData("Right motor target", linearSlides.slideMotorRight.getTargetPosition());
-        telemetry.addData("IS AT TRUE START?", linearSlides.startLimitSwitch.getState());
-
+        telemetry.addData("Start LS pressed", linearSlides.isStartLimitSwitchHit());
+        telemetry.addData("Intake LS pressed", linearSlides.isIntakeSwitchHit());
+        // Measure magazine positions: dpad up/down nudges the servo
+        if (gamepad1.dpad_up && !lastUp) magazineAngle.nudge(MagazineAngle.NUDGE_STEP);
+        if (gamepad1.dpad_down && !lastDown) magazineAngle.nudge(-MagazineAngle.NUDGE_STEP);
+        lastUp = gamepad1.dpad_up;
+        lastDown = gamepad1.dpad_down;
+        telemetry.addData("Mag pos", magazineAngle.getCommandedPos());
         telemetry.update();
     }
 
