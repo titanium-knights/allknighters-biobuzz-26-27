@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.utilities.MagazineServos;
 import org.firstinspires.ftc.teamcode.utilities.OuttakeHood;
 
 @TeleOp(name = "MagazineTest")
+@Disabled
 public class MagazineTest extends OpMode {
     private CRServo belt;
     private OuttakeHood hood;

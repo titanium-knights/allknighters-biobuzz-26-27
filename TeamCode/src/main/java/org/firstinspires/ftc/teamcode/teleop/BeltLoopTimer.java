@@ -4,11 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.utilities.MagazineBelt;
 import org.firstinspires.ftc.teamcode.utilities.OuttakeHood;
 
 @TeleOp(name = "BeltLoopTimer")
+@Disabled
 public class BeltLoopTimer extends OpMode {
     private static final double ALIGN_POWER = 0.3; // slow manual jog for lining up
 

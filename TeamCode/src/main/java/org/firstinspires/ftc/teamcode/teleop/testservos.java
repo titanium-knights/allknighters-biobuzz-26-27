@@ -10,7 +10,9 @@ import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
 import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
 import org.firstinspires.ftc.teamcode.utilities.MagazineBelt;
 import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 @TeleOp(name = "TestServos")
+@Disabled
 public class testservos extends OpMode {
     //private SubsystemManager subsystemManager;
     MagazineBelt magazineBelt;

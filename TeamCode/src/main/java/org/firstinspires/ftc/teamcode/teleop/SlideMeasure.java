@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
 import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "SlideMeasure")
+@Disabled
 public class SlideMeasure extends OpMode {
     private LinearSlides slides;
     private static final double POWER = 0.3; // raise if slides cannot lift the magazine

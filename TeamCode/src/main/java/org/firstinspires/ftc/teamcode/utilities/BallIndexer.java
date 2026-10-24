@@ -61,4 +61,12 @@ public class BallIndexer {
         t.addData("Sensor sees", lastSeen + " (" + seenLoops + "/" + DETECT_LOOPS + ")");
         t.addData("Belt realign needs", "%.2f s", belt.timeToRealign());
     }
+    /** Manual override: act as if a pollen was detected. Returns true if it moved the belt. */
+    public boolean forceIntake() {
+        if (isFull() || belt.isRunning || !hood.isSafeForBelt()) return false;
+        belt.startCycle(); // move one paddle
+        count++;
+        seenLoops = 0;
+        return true;
+    }
 }

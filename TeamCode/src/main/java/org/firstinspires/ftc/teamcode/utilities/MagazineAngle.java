@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MagazineAngle {
     public Servo angleServo;
     public static double INTAKE_POS = 0.73; // intake angle, measured
-    public static double SHOOT_POS = -1;    // TODO: measure. Shooting angle. -1 = not set, toShoot() does nothing
+    public static double SHOOT_POS = 0.9;   // TODO: tune. Starts near STOW_POS (start tilt)
     public static double STOW_POS = 0.9;    // TODO: measure. PLACEHOLDER start angle for 18 in sizing
     public static double NUDGE_STEP = 0.01; // per D-pad press when measuring
     public static double MOVE_TIME = 0.5;   // seconds allowed to reach a position
@@ -27,6 +27,11 @@ public class MagazineAngle {
     public void toIntake() { moveTo(INTAKE_POS); }
     public void toStow()   { if (STOW_POS >= 0 && STOW_POS <= 1) moveTo(STOW_POS); }
     public void toShoot()  { if (SHOOT_POS >= 0 && SHOOT_POS <= 1) moveTo(SHOOT_POS); }
+    /** Fine-tune the shoot angle; the new value is kept for the rest of the run. */
+    public void nudgeShoot(double d) {
+        SHOOT_POS = Math.max(0.0, Math.min(1.0, SHOOT_POS + d));
+        moveTo(SHOOT_POS);
+    }
     public void nudge(double delta) { moveTo(commandedPos + delta); }
     public double getCommandedPos() { return commandedPos; }
     public boolean isTilting() { return moving; }
