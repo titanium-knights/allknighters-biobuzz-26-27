@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MagazineAngle {
     public CRServo angleServo;
-    private double angleTime = 0.5;
-    private double power = 1.0;
+    private double angleTime = 0.1;
+    private double power = 0.3;
     private ElapsedTime runtime = new ElapsedTime();
 
 
@@ -21,7 +21,7 @@ public class MagazineAngle {
         angleServo.setPower(0.0);
     }
     public void magAngleBackward(){
-        angleServo.setPower(-power);
+        angleServo.setPower(-1 * power);
         runtime.reset();
         if (runtime.seconds()>=angleTime){angleServo.setPower(angleTime);}
         angleServo.setPower(0.0);

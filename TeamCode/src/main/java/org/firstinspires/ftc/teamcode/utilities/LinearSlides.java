@@ -14,9 +14,9 @@ public class LinearSlides {
     private Telemetry tele;
     private MagazineAngle magazineAngle;
     final int gameStartPos = -1; // Placeholder for the servo position of the slide when the game starts
-    final int gameStartPosReal = -1; // Placeholder for the servo position of the slide after starting but like actually
+    final int gameStartPosReal = 156; // Placeholder for the servo position of the slide after starting but like actually
     final int flowerOuttake = -1; //Placeholder for the position when outtaking to the flower
-    final int upPos = -1; //Placeholder for the position when shooting;
+    final int upPos = 1964; //Placeholder for the position when shooting;
     public int targetLevel = 0; //0 is start, 1 is intake, 2 is shoot
     public boolean hitLimitSwitch = false;
     public boolean slidesRunning = false;
@@ -29,6 +29,10 @@ public class LinearSlides {
         intakeLimitSwitch = hmap.get(DigitalChannel.class, "IntakeLS");
         this.tele = tele;
         this.magazineAngle = magazineAngle;
+        slideMotorRight.setPower(0);
+        slideMotorLeft.setPower(0);
+        slideMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void checkEquivalenceAndAdjust(){
@@ -49,19 +53,23 @@ public class LinearSlides {
         return out;
     }
     public boolean isIntakeSwitchHit(){
-        boolean out = intakeLimitSwitch.getState();
+        boolean out = !intakeLimitSwitch.getState();
         if (out){hitLimitSwitch = true;}
         return out;
     }
     public boolean isStartLimitSwitchHit(){
-        boolean out = startLimitSwitch.getState();
+        boolean out = !startLimitSwitch.getState();
         if(out){hitLimitSwitch = true;}
         return out;
     }
 
     public void toShoot(){
-        slideMotorRight.setTargetPosition(upPos);
-        slideMotorLeft.setTargetPosition(-upPos);
+        slideMotorRight.setTargetPosition(-upPos);
+        slideMotorLeft.setTargetPosition(upPos);
+        slideMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorRight.setPower(0.9);
+        slideMotorLeft.setPower(0.9);
         targetLevel = 2;
         slidesRunning = true;
     }
@@ -70,7 +78,7 @@ public class LinearSlides {
             slideMotorRight.setPower(0);
             slideMotorLeft.setPower(0);
             checkEquivalenceAndAdjust();
-            magazineAngle.setStartAngle();
+            magazineAngle.magAngleBackward();
             slidesRunning = false;
         }
     }
@@ -78,9 +86,10 @@ public class LinearSlides {
         if (slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition() && targetLevel == 2 && slidesRunning){
             slideMotorRight.setPower(0);
             slideMotorLeft.setPower(0);
+
             checkEquivalenceAndAdjust();
             slidesRunning = false;
-            magazineAngle.setShootAngle();
+            magazineAngle.magAngleForward();
             return true;
         }
         return false;
@@ -92,7 +101,7 @@ public class LinearSlides {
             slideMotorLeft.setPower(0);
             checkEquivalenceAndAdjust();
             slidesRunning = false;
-            magazineAngle.setShootAngle();
+            magazineAngle.magAngleForward();
             return true;
         }
         return slideMotorRight.getCurrentPosition() == slideMotorRight.getTargetPosition();
@@ -106,8 +115,12 @@ public class LinearSlides {
         slidesRunning = true;
     }
     public void toIntake(){
-        slideMotorRight.setTargetPosition(gameStartPosReal);
-        slideMotorLeft.setTargetPosition(-gameStartPosReal);
+        slideMotorRight.setTargetPosition(-gameStartPosReal);
+        slideMotorLeft.setTargetPosition(gameStartPosReal);
+        slideMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorRight.setPower(0.9);
+        slideMotorLeft.setPower(0.9);
         targetLevel = 1;
         slidesRunning= true;
     }

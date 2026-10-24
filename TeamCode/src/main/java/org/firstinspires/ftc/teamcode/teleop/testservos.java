@@ -26,6 +26,7 @@ public class testservos extends OpMode {
         magazineBelt = new MagazineBelt(hardwareMap);
         //subsystemManager = new SubsystemManager(hardwareMap, telemetry);
         beltServo = hardwareMap.get(CRServo.class, "Belt Servo");
+        magazineAngle = new MagazineAngle(hardwareMap);
         linearSlides = new LinearSlides(hardwareMap, telemetry, magazineAngle);
     }
 
@@ -33,7 +34,6 @@ public class testservos extends OpMode {
     public void loop(){
         if(gamepad1.dpad_right) {
             magazineBelt.startCycle();
-
         }
 
         magazineBelt.update();
@@ -50,7 +50,9 @@ public class testservos extends OpMode {
         }
         telemetry.addData("rightMotor Position", linearSlides.slideMotorRight.getCurrentPosition());
         telemetry.addData("Right motor target", linearSlides.slideMotorRight.getTargetPosition());
-        telemetry.addData("IS AT TRUE START?", linearSlides.isStartLimitSwitchHit());
+        telemetry.addData("IS AT TRUE START?", linearSlides.startLimitSwitch.getState());
+
+        telemetry.update();
     }
 
 

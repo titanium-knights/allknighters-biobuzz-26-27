@@ -130,9 +130,9 @@ public class Teleop extends OpMode {
 
         // magazine angle
         if (linearSlides.isAtCorrectPositionToShoot()) {
-            magazineAngle.setShootAngle();
+            magazineAngle.magAngleForward();
         } else {
-            magazineAngle.setStartAngle();
+            magazineAngle.magAngleBackward();
         }
         flywheel.setShooterOn(linearSlides.isAtCorrectPositionToShoot());
         outtake.update();

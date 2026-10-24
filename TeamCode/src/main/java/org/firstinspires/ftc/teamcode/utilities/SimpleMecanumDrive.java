@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.utilities;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class SimpleMecanumDrive {
+public class
+SimpleMecanumDrive {
 
     private final DcMotor fl, fr, bl, br;
 
