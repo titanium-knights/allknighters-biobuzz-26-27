@@ -37,6 +37,9 @@ public class TeleopExp2 extends OpMode {
     private boolean cameFromShoot = false;
     private boolean launchPending = false;
     private boolean lastIntakeToggle, lastSlideUp, lastSlideDown, lastLaunch, lastAtShoot;
+    private boolean lastMagUp, lastMagDown;
+    private boolean lastForceIntake;
+    private final ElapsedTime loopTimer = new ElapsedTime();
 
     @Override
     public void init() {
@@ -122,12 +125,23 @@ public class TeleopExp2 extends OpMode {
 
         // ===== Auto indexing: pollen seen -> one belt cycle =====
         indexer.update(atIntake && intakeOn);
+        // Gamepad 1 Y: override, count a pollen and move one paddle (only at intake)
+        boolean force = gamepad1.y;
+        if (force && !lastForceIntake && atIntake) indexer.forceIntake();
+        lastForceIntake = force;
 
         // ===== Shooting (gamepad 2 X = launch sequence) =====
         if (atShoot && !lastAtShoot) magazineAngle.toShoot();
         if (!atShoot && lastAtShoot) magazineAngle.toIntake();
         lastAtShoot = atShoot;
         shooter.setSpinning(atShoot);
+        // Gamepad 2 dpad up/down: fine-tune magazine shoot angle, ONLY at shoot height
+        if (atShoot) {
+            if (gamepad2.dpad_up && !lastMagUp) magazineAngle.nudgeShoot(MagazineAngle.NUDGE_STEP);
+            if (gamepad2.dpad_down && !lastMagDown) magazineAngle.nudgeShoot(-MagazineAngle.NUDGE_STEP);
+        }
+        lastMagUp = gamepad2.dpad_up;
+        lastMagDown = gamepad2.dpad_down;
 
         boolean launch = gamepad2.x;
         if (launch && !lastLaunch && atShoot && !shooter.isShooting) {
@@ -154,6 +168,9 @@ public class TeleopExp2 extends OpMode {
         shooter.addTelemetry(telemetry);
         telemetry.addData("Intake", intakeOn ? "ON" : "off");
         linearSlides.addTelemetry(telemetry);
+        telemetry.addData("Mag shoot pos", "%.2f", MagazineAngle.SHOOT_POS);
+        telemetry.addData("Loop time (ms)", "%.0f", loopTimer.milliseconds());
+        loopTimer.reset();
         telemetry.update();
     }
 
