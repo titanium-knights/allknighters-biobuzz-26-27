@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.utilities.Flywheel;
 import org.firstinspires.ftc.teamcode.utilities.Intake;
 import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
 import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
+import org.firstinspires.ftc.teamcode.utilities.MagazineBelt;
 import org.firstinspires.ftc.teamcode.utilities.MagazineServos;
 import org.firstinspires.ftc.teamcode.utilities.OurColorSensor;
 import org.firstinspires.ftc.teamcode.utilities.OuttakeHood;
@@ -29,6 +30,7 @@ public class Teleop extends OpMode {
     private Flywheel flywheel;
     private boolean lastLeftBumper;
     private boolean lastRightBumper;
+    private ShootingLogic shootingLogic;
     private boolean lastFlapButton;
     private boolean pollenFlapSelected;
 
@@ -43,11 +45,15 @@ public class Teleop extends OpMode {
         outtakeHood = subsystemManager.outtakeHood;
         linearSlides = subsystemManager.linearSlides;
         outtake = subsystemManager.shootingLogic;
-        flywheel = outtake.getFlywheel();
+        shootingLogic = subsystemManager.shootingLogic;
         outtakeHood.flapNectar();
         telemetry.addData("Drive", "Ready");
         telemetry.update();
-
+        if (linearSlides.isStartLimitSwitchHit()){
+            telemetry.addData("IT IS NOT HIT!!!!!!!!!", "WE R COOKED");
+            telemetry.update();
+            stop();
+        }
     }
 
     @Override
@@ -132,6 +138,12 @@ public class Teleop extends OpMode {
             magazineServos.stopIntake();
         }
 
+        //Shooting logic
+        if (gamepad2.b && !shootingLogic.isShooting){
+            shootingLogic.shootBall();
+        }
+        shootingLogic.updateDuringShoot();
+
         // magazine angle
         if (linearSlides.getTargetLevel() == 2 && !linearSlides.isSlidesRunning()) {
             magazineAngle.magAngleForward();
@@ -140,7 +152,6 @@ public class Teleop extends OpMode {
             magazineAngle.magAngleBackward();
             flywheel.setTargetRPM(0);
         }
-        outtake.update();
 
         telemetry.addData("slide level: ", linearSlides.getTargetLevel());
         telemetry.addData("is slide at top: ", linearSlides.isAtCorrectPositionToShoot());
@@ -156,7 +167,6 @@ public class Teleop extends OpMode {
             subsystemManager.intake.stopIntake();
             subsystemManager.magazineServos.stopIntake();
             flywheel.setShooterOn(false);
-            outtake.update();
         }
     }
 }
