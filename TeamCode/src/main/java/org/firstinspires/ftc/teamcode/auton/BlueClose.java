@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
 import org.firstinspires.ftc.teamcode.utilities.SimpleMecanumDrive;
 
 //DEFINED AS THE POSITION
-@Autonomous(name = "TopBlue", group = "Autonomous")
+@Autonomous(name = "BlueClose", group = "Autonomous")
 public class BlueClose extends LinearOpMode {
     private SimpleMecanumDrive drive;;
     private MagazineAngle magazineAngle;
