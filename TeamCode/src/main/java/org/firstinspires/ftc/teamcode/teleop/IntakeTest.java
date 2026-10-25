@@ -4,83 +4,86 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "IntakeTest")
-// @Disabled
 public class IntakeTest extends OpMode {
-    private ServoImplEx armL, armR;
-    private CRServo roller;
-
-    private double posL = 0.5, posR = 0.5;
-    private boolean enabledL = false, enabledR = false;
-    private int selected = 0; // 0 = left, 1 = right
-    private boolean lastUp, lastDown, lastRB, lastLB, lastX, lastB, lastY, lastA;
-
     private static final double FINE = 0.01;
     private static final double COARSE = 0.05;
     private static final double ROLLER_POWER = 0.9;
+
+    private ServoImplEx armL, armR; // position servos, mirrored
+    private CRServo roller;
+
+    private double pos = 0.0;  // left arm value; right = 1 - left
+    private boolean powered = false;
+    private double recordedDown = -1, recordedUp = -1;
+    private boolean lastUp, lastDown, lastRB, lastLB, lastA, lastX, lastB;
 
     @Override
     public void init() {
         armL = hardwareMap.get(ServoImplEx.class, "ArmServoLeft");
         armR = hardwareMap.get(ServoImplEx.class, "ArmServoRight");
         roller = hardwareMap.get(CRServo.class, "Intake Servo");
-        armL.setPwmDisable(); // no signal = limp, nothing moves at Init
-        armR.setPwmDisable();
+        send(); // both arms to the zero position at Init (left 0.00, right 1.00 mirrored)
+    }
+
+    @Override
+    public void start() {
+        send(); // power both arms at Start (left = pos, right = 1 - pos)
     }
 
     @Override
     public void loop() {
-        // X = work on LEFT (right goes limp), B = work on RIGHT (left goes limp)
-        if (gamepad1.x && !lastX) { selected = 0; armR.setPwmDisable(); enabledR = false; }
-        if (gamepad1.b && !lastB) { selected = 1; armL.setPwmDisable(); enabledL = false; }
-
-        // Y = power BOTH at their current values (only after you know they agree)
-        if (gamepad1.y && !lastY) {
-            armL.setPosition(posL); armL.setPwmEnable(); enabledL = true;
-            armR.setPosition(posR); armR.setPwmEnable(); enabledR = true;
-        }
-
-        // A = PANIC: both arm servos limp
+        // A = PANIC: both arms limp
         if (gamepad1.a && !lastA) {
-            armL.setPwmDisable(); enabledL = false;
-            armR.setPwmDisable(); enabledR = false;
+            armL.setPwmDisable();
+            armR.setPwmDisable();
+            powered = false;
         }
 
-        // Nudge selected servo: dpad up/down = 0.01, RB/LB = 0.05
-        double delta = 0;
-        if (gamepad1.dpad_up && !lastUp) delta += FINE;
-        if (gamepad1.dpad_down && !lastDown) delta -= FINE;
-        if (gamepad1.right_bumper && !lastRB) delta += COARSE;
-        if (gamepad1.left_bumper && !lastLB) delta -= COARSE;
-        if (delta != 0) {
-            if (selected == 0) {
-                posL = Math.max(0, Math.min(1, posL + delta));
-                armL.setPosition(posL); armL.setPwmEnable(); enabledL = true;
-            } else {
-                posR = Math.max(0, Math.min(1, posR + delta));
-                armR.setPosition(posR); armR.setPwmEnable(); enabledR = true;
-            }
+        // Move BOTH arms together (mirrored): dpad up/down = 0.01, RB/LB = 0.05
+        double d = 0;
+        if (gamepad1.dpad_up && !lastUp) d += FINE;
+        if (gamepad1.dpad_down && !lastDown) d -= FINE;
+        if (gamepad1.right_bumper && !lastRB) d += COARSE;
+        if (gamepad1.left_bumper && !lastLB) d -= COARSE;
+        if (d != 0) {
+            pos = Math.max(0, Math.min(1, pos + d));
+            send();
         }
 
-        lastX = gamepad1.x; lastB = gamepad1.b; lastY = gamepad1.y; lastA = gamepad1.a;
+        // X = record DOWN, B = record UP
+        if (gamepad1.x && !lastX) recordedDown = pos;
+        if (gamepad1.b && !lastB) recordedUp = pos;
+
         lastUp = gamepad1.dpad_up; lastDown = gamepad1.dpad_down;
         lastRB = gamepad1.right_bumper; lastLB = gamepad1.left_bumper;
+        lastA = gamepad1.a; lastX = gamepad1.x; lastB = gamepad1.b;
 
-        // Roller: hold RT = intake, hold LT = outtake (same directions as Intake.java)
+        // Roller: hold RT = intake, hold LT = outtake
         double rp = 0;
         if (gamepad1.right_trigger > 0.5) rp = ROLLER_POWER;
         else if (gamepad1.left_trigger > 0.5) rp = -ROLLER_POWER;
         roller.setPower(rp);
 
-        telemetry.addLine("X=select L  B=select R  Y=power both  A=PANIC limp");
-        telemetry.addLine("dpad up/down = +/-0.01   RB/LB = +/-0.05   RT/LT = roller");
-        telemetry.addData("Selected", selected == 0 ? "LEFT" : "RIGHT");
-        telemetry.addData("Left pos", "%.2f  (%s)", posL, enabledL ? "powered" : "limp");
-        telemetry.addData("Right pos", "%.2f  (%s)", posR, enabledR ? "powered" : "limp");
+        telemetry.addLine("Arms: dpad U/D 0.01 | RB/LB 0.05 | A = PANIC limp");
+        telemetry.addLine("X = record DOWN | B = record UP | RT/LT = roller");
+        telemetry.addData("Left / Right", "%.2f / %.2f (%s)", pos, 1.0 - pos, powered ? "powered" : "limp");
+        telemetry.addData("Recorded DOWN", recordedDown < 0 ? "-" : String.format("%.2f", recordedDown));
+        telemetry.addData("Recorded UP", recordedUp < 0 ? "-" : String.format("%.2f", recordedUp));
         telemetry.addData("Roller power", rp);
+        telemetry.addData("ArmL", armL.getConnectionInfo() + " port " + armL.getPortNumber());
+        telemetry.addData("ArmR", armR.getConnectionInfo() + " port " + armR.getPortNumber());
         telemetry.update();
+    }
+
+    /** Send both arms to pos (right mirrored) and power them. */
+    private void send() {
+        armL.setPosition(pos);
+        armR.setPosition(1.0 - pos);
+        armL.setPwmEnable();
+        armR.setPwmEnable();
+        powered = true;
     }
 
     @Override
