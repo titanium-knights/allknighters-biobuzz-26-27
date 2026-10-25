@@ -35,6 +35,7 @@ public class RecoveryTeleop extends OpMode {
     private boolean lastIntakeToggle, lastSlideUp, lastSlideDown, lastLaunch, lastAtShoot;
     private boolean lastMagUp, lastMagDown, lastForceIntake, lastCountUp, lastCountDown;
     private final ElapsedTime loopTimer = new ElapsedTime();
+    private boolean lastTrimUp, lastTrimDown;
 
     @Override
     public void init() {
@@ -117,6 +118,13 @@ public class RecoveryTeleop extends OpMode {
         boolean force = gamepad2.y;
         if (force && !lastForceIntake && atIntake) indexer.forceIntake();
         lastForceIntake = force;
+        // Gamepad 2 dpad up/down AT INTAKE: trim slide height (e.g. lift off the ground)
+        if (atIntake) {
+            if (gamepad2.dpad_up && !lastTrimUp) linearSlides.trimIntake(LinearSlides.TRIM_TICKS);
+            if (gamepad2.dpad_down && !lastTrimDown) linearSlides.trimIntake(-LinearSlides.TRIM_TICKS);
+        }
+        lastTrimUp = gamepad2.dpad_up;
+        lastTrimDown = gamepad2.dpad_down;
 
         // ===== Gamepad 2 dpad right/left: fix ball count (not at shoot) =====
         if (!atShoot) {

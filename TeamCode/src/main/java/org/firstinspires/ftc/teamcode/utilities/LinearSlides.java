@@ -20,15 +20,17 @@ public class LinearSlides {
     final int gameStartPos = -1; // Placeholder (legacy)
     final int gameStartPosReal = 215; // Encoder ticks StartLS -> IntakeLS. Measured with SlideMeasure (R side).
     public static int intakeTuneOffset = 0; // TODO: tune. Ticks added to intake height
-    final int upPos = 1040; // Shoot position (estimate for ~29 in total height). TODO: fine tune
-    final int flowerOuttake = 630; // TODO: tune. Midpoint between intake and shoot
+    final int upPos = 1500;        // TODO: tune toward 29 in
+    final int flowerOuttake = 860; // TODO: tune. Midpoint between intake and shoot
     public static double SLIDE_POWER = 0.9;
     public static double BUSY_CHECK_DELAY = 0.1; // seconds before trusting isBusy() after a command
     public static int START_TILT_TICKS = 0; // magazine goes to intake the moment the lift starts
-    public static double DOWN_POWER = 0.5;     // TODO: tune. Max power while moving down
-    public static double SLOW_POWER = 0.2;     // TODO: tune. Power for the final part of a downward move
-    public static int SLOW_ZONE_TICKS = 300;   // TODO: tune. Switch to SLOW_POWER this close to the target
-    public static int INTAKE_SEEK_TICKS = 80; // TODO: tune. Going down to intake aims this far below, so IntakeLS is always reached
+    public static double UP_POWER = 0.6;       // TODO: tune. Speed limit going up (both sides)
+    public static double DOWN_POWER = 0.35;    // speed limit going down (right/master)
+    public static double SLOW_POWER = 0.12;    // TODO: tune. Creep speed for the final approach
+    public static int SLOW_ZONE_TICKS = 400;   // TODO: tune. Start creeping this far before the expected stop
+    public static int INTAKE_SEEK_TICKS = 60;  // TODO: tune. Aim this far below expected intake; IntakeLS stops it
+    public static int TRIM_TICKS = 20; // per gamepad press when trimming the intake height
     public static double HOMING_POWER = 0.3;   // TODO: tune. Slow downward power while searching for a switch
     public static double HOMING_TIMEOUT = 6.0; // seconds before giving up
     // Slide positions, lowest to highest
@@ -45,6 +47,7 @@ public class LinearSlides {
     private int offsetR = 0; // shifts the right motor's frame after IntakeLS correction
     private boolean movingDown = false;
     private boolean slowed = false;
+    private int slowRefRaw = 0; // right-motor position where the move should really stop (slow zone measured from here)
     private boolean homing = false;
     private boolean homingFailed = false;
     private final ElapsedTime homingTimer = new ElapsedTime();
@@ -80,8 +83,13 @@ public class LinearSlides {
         if (startStep == 0) goToLevel(levelIndex + 1);
     }
     public void levelDown() { if (!homing && startStep == 0) goToLevel(levelIndex - 1); }
+    /** Manual trim at intake (positive = up). Kept for later arrivals at intake. */
+    public void trimIntake(int ticks) {
+        if (levelIndex != 0 || moving || homing || startStep != 0) return;
+        intakeTuneOffset += ticks;
+        setTargetsRaw(slideMotorRight.getTargetPosition() - ticks); // right counts negative going up
+    }
 
-    /** Call once at Start. Returns false (and does nothing) if slides are not on StartLS. */
     /** Call once at Start. Returns false (and does nothing) if slides are not on StartLS. */
     public boolean startInitialManeuver() {
         if (!isStartLimitSwitchHit()) return false;
@@ -175,13 +183,13 @@ public class LinearSlides {
         }
         lastIntakeHit = intakeHit;
 
-        // Controlled descent: left follows right's actual position; right slows near the end
+        // Controlled descent: left follows right; right creeps once near the expected stop
         if (moving && movingDown) {
             slideMotorLeft.setTargetPosition(-slideMotorRight.getCurrentPosition());
             if (!slowed) {
-                int remaining = Math.abs(slideMotorRight.getTargetPosition() - slideMotorRight.getCurrentPosition());
+                int remaining = slowRefRaw - slideMotorRight.getCurrentPosition(); // ticks left until the expected stop
                 if (remaining <= SLOW_ZONE_TICKS) {
-                    slideMotorRight.setPower(SLOW_POWER); // only the master slows
+                    slideMotorRight.setPower(SLOW_POWER);
                     slowed = true;
                 }
             }
@@ -208,36 +216,36 @@ public class LinearSlides {
         t.addData("Start maneuver running", isStartManeuverRunning());
         t.addData("Mag tilting", magazineAngle.isTilting());
         t.addData("Homing", homing ? "searching..." : (homingFailed ? "FAILED (no switch found)" : "done"));
+        t.addData("Intake trim (ticks)", intakeTuneOffset);
     }
 
     // ================= PRIVATE HELPERS (all motor commands go through here) =================
-    /** pos = slide height in ticks (positive = up). */
-    /** pos = slide height in ticks (positive = up). Downward moves use DOWN_POWER. */
-    /** pos = slide height in ticks (positive = up). Downward moves: right controls speed, left follows. */
+    /** pos = slide height in ticks (positive = up). Going down: slow creep near the expected stop. */
     private void driveTo(int pos) {
         boolean down = (-pos + offsetR) > slideMotorRight.getCurrentPosition(); // right counts toward 0 going down
-        if (down && levelIndex == 0) pos -= INTAKE_SEEK_TICKS; // aim below IntakeLS; the switch stops it
+        slowRefRaw = -pos + offsetR;                            // the real stop height
+        if (down && levelIndex == 0) pos -= INTAKE_SEEK_TICKS;  // aim a little below; IntakeLS stops it
         int raw = -pos + offsetR;
-        setTargetsRaw(raw, down ? DOWN_POWER : SLIDE_POWER);
+        if (down) setTargetsRaw(raw, DOWN_POWER, SLIDE_POWER);  // right limits speed, left follows
+        else      setTargetsRaw(raw, UP_POWER, UP_POWER);       // going up: both sides same speed
         movingDown = down;
-        if (down) slideMotorLeft.setTargetPosition(-slideMotorRight.getCurrentPosition()); // left follows from here
+        if (down) slideMotorLeft.setTargetPosition(-slideMotorRight.getCurrentPosition());
     }
 
     /** Sets right to rawRightTarget, left to its mirror, and runs both. */
     /** Sets right to rawRightTarget, left to its mirror, and runs both at full power. */
     private void setTargetsRaw(int rawRightTarget) {
-        setTargetsRaw(rawRightTarget, SLIDE_POWER);
+        setTargetsRaw(rawRightTarget, SLIDE_POWER, SLIDE_POWER);
     }
 
-    /** Sets right to rawRightTarget, left to its mirror, and runs both at the given power. */
-    /** Right gets the given power (speed limit); left always full power so it can hold its side. */
-    private void setTargetsRaw(int rawRightTarget, double power) {
+    /** Sets right to rawRightTarget, left to its mirror, with separate power limits per side. */
+    private void setTargetsRaw(int rawRightTarget, double rightPower, double leftPower) {
         slideMotorRight.setTargetPosition(rawRightTarget);
         slideMotorLeft.setTargetPosition(-rawRightTarget);
         slideMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotorRight.setPower(power);
-        slideMotorLeft.setPower(SLIDE_POWER);
+        slideMotorRight.setPower(rightPower);
+        slideMotorLeft.setPower(leftPower);
         moving = true;
         movingDown = false;
         slowed = false;

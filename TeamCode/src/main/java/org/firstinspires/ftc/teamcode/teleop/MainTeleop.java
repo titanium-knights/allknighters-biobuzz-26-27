@@ -40,6 +40,7 @@ public class MainTeleop extends OpMode {
     private boolean lastMagUp, lastMagDown;
     private boolean lastForceIntake;
     private final ElapsedTime loopTimer = new ElapsedTime();
+    private boolean lastTrimUp, lastTrimDown;
 
     @Override
     public void init() {
@@ -129,6 +130,13 @@ public class MainTeleop extends OpMode {
         boolean force = gamepad2.y;
         if (force && !lastForceIntake && atIntake) indexer.forceIntake();
         lastForceIntake = force;
+        // Gamepad 2 dpad up/down AT INTAKE: trim slide height (e.g. lift off the ground)
+        if (atIntake) {
+            if (gamepad2.dpad_up && !lastTrimUp) linearSlides.trimIntake(LinearSlides.TRIM_TICKS);
+            if (gamepad2.dpad_down && !lastTrimDown) linearSlides.trimIntake(-LinearSlides.TRIM_TICKS);
+        }
+        lastTrimUp = gamepad2.dpad_up;
+        lastTrimDown = gamepad2.dpad_down;
 
         // ===== Shooting (gamepad 2 X = launch sequence) =====
         if (atShoot && !lastAtShoot) magazineAngle.toShoot();
