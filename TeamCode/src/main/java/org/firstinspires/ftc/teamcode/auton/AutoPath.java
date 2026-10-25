@@ -145,10 +145,9 @@ public class AutoPath extends LinearOpMode {
                 waitForStart();
             } else {stop();}
 
-            magazineAngle.magAngleBackward();
-            linearSlides.toIntake();
-            while(linearSlides.slidesRunning){
-                linearSlides.isLimitSwitchHitAndStopIfSo();
+            linearSlides.startInitialManeuver();
+            while(linearSlides.isMoving()){
+                linearSlides.update();
             }
 
             if (!opModeIsActive()) return;

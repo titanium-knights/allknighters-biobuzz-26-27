@@ -25,7 +25,11 @@ public class LinearSlides {
     public static double SLIDE_POWER = 0.9;
     public static double BUSY_CHECK_DELAY = 0.1; // seconds before trusting isBusy() after a command
     public static int START_TILT_TICKS = 0; // magazine goes to intake the moment the lift starts
-
+    public static double DOWN_POWER = 0.5;     // TODO: tune. Max power while moving down
+    public static double SLOW_POWER = 0.2;     // TODO: tune. Power for the final part of a downward move
+    public static int SLOW_ZONE_TICKS = 300;   // TODO: tune. Switch to SLOW_POWER this close to the target
+    public static double HOMING_POWER = 0.3;   // TODO: tune. Slow downward power while searching for a switch
+    public static double HOMING_TIMEOUT = 6.0; // seconds before giving up
     // Slide positions, lowest to highest
     public int[] levelPositions = {gameStartPosReal + intakeTuneOffset, flowerOuttake, upPos}; // intake, flower, shoot
     public int levelIndex = -1; // -1 = at start (StartLS), not part of the list
@@ -38,6 +42,11 @@ public class LinearSlides {
     private boolean lastStartHit = false;
     private boolean lastIntakeHit = false;
     private int offsetR = 0; // shifts the right motor's frame after IntakeLS correction
+    private boolean movingDown = false;
+    private boolean slowed = false;
+    private boolean homing = false;
+    private boolean homingFailed = false;
+    private final ElapsedTime homingTimer = new ElapsedTime();
 
     // Legacy state (old TeleOp)
     public int targetLevel = 0; //0 is start, 1 is intake, 2 is shoot
@@ -65,10 +74,11 @@ public class LinearSlides {
         driveTo(levelPositions[index]);
     }
     public void levelUp() {
+        if (homing) return;
         if (levelIndex == -1 && startStep == 0) { startInitialManeuver(); return; } // first press: tilt + lift
         if (startStep == 0) goToLevel(levelIndex + 1);
     }
-    public void levelDown() { if (startStep == 0) goToLevel(levelIndex - 1); }
+    public void levelDown() { if (!homing && startStep == 0) goToLevel(levelIndex - 1); }
 
     /** Call once at Start. Returns false (and does nothing) if slides are not on StartLS. */
     /** Call once at Start. Returns false (and does nothing) if slides are not on StartLS. */
@@ -81,6 +91,30 @@ public class LinearSlides {
         goToLevel(0);
         startStep = 1;
         return true;
+    }
+    /** Recovery: slides at an unknown height. Find a limit switch and continue from there. */
+    public void startRecoveryHoming() {
+        homingFailed = false;
+        if (isStartLimitSwitchHit()) { startInitialManeuver(); return; } // at the very bottom: normal deploy
+        if (isIntakeSwitchHit()) { setIntakeReferenceAndHold(); return; } // already at intake
+        levelIndex = -1;
+        slideMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotorRight.setPower(HOMING_POWER); // right counts toward 0 going down
+        slideMotorLeft.setTargetPosition(-slideMotorRight.getCurrentPosition());
+        slideMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotorLeft.setPower(SLIDE_POWER);
+        homing = true;
+        homingTimer.reset();
+    }
+    public boolean isHoming() { return homing; }
+    public boolean didHomingFail() { return homingFailed; }
+
+    /** Treat the current spot (on IntakeLS) as the intake height and hold here. */
+    private void setIntakeReferenceAndHold() {
+        int curR = slideMotorRight.getCurrentPosition();
+        offsetR = curR + gameStartPosReal;
+        levelIndex = 0;
+        setTargetsRaw(curR - intakeTuneOffset);
     }
     public boolean isStartManeuverRunning() { return startStep != 0; }
     public int getLevel()   { return levelIndex; }
@@ -99,6 +133,21 @@ public class LinearSlides {
 
     /** Call once per loop. Handles zeroing, IntakeLS correction, and left-mirrors-right. */
     public void update() {
+        // Recovery homing: slow descent until a limit switch is found
+        if (homing) {
+            slideMotorLeft.setTargetPosition(-slideMotorRight.getCurrentPosition()); // left follows right
+            if (isIntakeSwitchHit()) {
+                homing = false;
+                setIntakeReferenceAndHold();
+            } else if (isStartLimitSwitchHit()) {
+                homing = false;
+                startInitialManeuver(); // went below intake: do the normal deploy
+            } else if (homingTimer.seconds() > HOMING_TIMEOUT) {
+                homing = false;
+                homingFailed = true;
+                setTargetsRaw(slideMotorRight.getCurrentPosition()); // stop and hold where it is
+            }
+        }
         // At start: StartLS defines true zero
         boolean startHit = isStartLimitSwitchHit();
         if (levelIndex == -1 && startHit && !lastStartHit) {
@@ -125,10 +174,23 @@ public class LinearSlides {
         }
         lastIntakeHit = intakeHit;
 
-        // End of move: left adjusts to mirror where right actually ended up
+        // Controlled descent: slow down for the last part of a downward move
+        if (moving && movingDown && !slowed) {
+            int remaining = Math.abs(slideMotorRight.getTargetPosition() - slideMotorRight.getCurrentPosition());
+            if (remaining <= SLOW_ZONE_TICKS) {
+                slideMotorRight.setPower(SLOW_POWER);
+                slideMotorLeft.setPower(SLOW_POWER);
+                slowed = true;
+            }
+        }
+
+        // End of move: left mirrors right, then full power to hold firmly
         if (moving && moveTimer.seconds() > BUSY_CHECK_DELAY && !slideMotorRight.isBusy()) {
             mirrorLeftToRight();
+            slideMotorRight.setPower(SLIDE_POWER);
+            slideMotorLeft.setPower(SLIDE_POWER);
             moving = false;
+            movingDown = false;
         }
     }
 
@@ -142,23 +204,36 @@ public class LinearSlides {
         t.addData("Intake LS pressed", isIntakeSwitchHit());
         t.addData("Start maneuver running", isStartManeuverRunning());
         t.addData("Mag tilting", magazineAngle.isTilting());
+        t.addData("Homing", homing ? "searching..." : (homingFailed ? "FAILED (no switch found)" : "done"));
     }
 
     // ================= PRIVATE HELPERS (all motor commands go through here) =================
     /** pos = slide height in ticks (positive = up). */
+    /** pos = slide height in ticks (positive = up). Downward moves use DOWN_POWER. */
     private void driveTo(int pos) {
-        setTargetsRaw(-pos + offsetR);
+        int raw = -pos + offsetR;
+        boolean down = raw > slideMotorRight.getCurrentPosition(); // right counts toward 0 going down
+        setTargetsRaw(raw, down ? DOWN_POWER : SLIDE_POWER);
+        movingDown = down;
     }
 
     /** Sets right to rawRightTarget, left to its mirror, and runs both. */
+    /** Sets right to rawRightTarget, left to its mirror, and runs both at full power. */
     private void setTargetsRaw(int rawRightTarget) {
+        setTargetsRaw(rawRightTarget, SLIDE_POWER);
+    }
+
+    /** Sets right to rawRightTarget, left to its mirror, and runs both at the given power. */
+    private void setTargetsRaw(int rawRightTarget, double power) {
         slideMotorRight.setTargetPosition(rawRightTarget);
         slideMotorLeft.setTargetPosition(-rawRightTarget);
         slideMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotorRight.setPower(SLIDE_POWER);
-        slideMotorLeft.setPower(SLIDE_POWER);
+        slideMotorRight.setPower(power);
+        slideMotorLeft.setPower(power);
         moving = true;
+        movingDown = false;
+        slowed = false;
         moveTimer.reset();
     }
 

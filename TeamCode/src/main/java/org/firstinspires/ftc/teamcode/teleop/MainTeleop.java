@@ -14,9 +14,9 @@ import org.firstinspires.ftc.teamcode.utilities.OurColorSensor;
 import org.firstinspires.ftc.teamcode.utilities.OuttakeHood;
 import org.firstinspires.ftc.teamcode.utilities.ShootingLogic;
 import org.firstinspires.ftc.teamcode.utilities.SimpleMecanumDrive;
-
-@TeleOp(name = "TeleopExp2")
-public class TeleopExp2 extends OpMode {
+//Wifi Password: FTCTitaniumA15887!
+@TeleOp(name = "MainTeleop")
+public class MainTeleop extends OpMode {
     public static int PRELOAD_COUNT = 3;          // balls in the magazine at match start
     public static double AXON_WAKE_TIME = 1.0;    // seconds after Start before the first RB is accepted
 
@@ -125,8 +125,8 @@ public class TeleopExp2 extends OpMode {
 
         // ===== Auto indexing: pollen seen -> one belt cycle =====
         indexer.update(atIntake && intakeOn);
-        // Gamepad 1 Y: override, count a pollen and move one paddle (only at intake)
-        boolean force = gamepad1.y;
+        // Gamepad 2 Y: override, count a pollen and move one paddle (only at intake)
+        boolean force = gamepad2.y;
         if (force && !lastForceIntake && atIntake) indexer.forceIntake();
         lastForceIntake = force;
 

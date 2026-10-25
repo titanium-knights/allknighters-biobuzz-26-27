@@ -11,8 +11,10 @@ import org.firstinspires.ftc.teamcode.utilities.MagazineServos;
 import org.firstinspires.ftc.teamcode.utilities.OuttakeHood;
 import org.firstinspires.ftc.teamcode.utilities.ShootingLogic;
 import org.firstinspires.ftc.teamcode.utilities.SimpleMecanumDrive;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "TeleopExp")
+@Disabled
 public class TeleopExp extends OpMode {
     private MagazineAngle magazineAngle;
     private LinearSlides linearSlides;

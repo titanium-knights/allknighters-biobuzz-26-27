@@ -12,10 +12,12 @@ import org.firstinspires.ftc.teamcode.utilities.OurColorSensor;
 import org.firstinspires.ftc.teamcode.utilities.OuttakeHood;
 import org.firstinspires.ftc.teamcode.utilities.ShootingLogic;
 import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 //Wifi Password: FTCTitaniumA15887!
 
 @TeleOp(name = "TeleOp")
+@Disabled
 public class Teleop extends OpMode {
     private SubsystemManager subsystemManager;
     private double modifier;
