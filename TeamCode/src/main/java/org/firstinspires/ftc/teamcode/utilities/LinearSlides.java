@@ -20,14 +20,15 @@ public class LinearSlides {
     final int gameStartPos = -1; // Placeholder (legacy)
     final int gameStartPosReal = 215; // Encoder ticks StartLS -> IntakeLS. Measured with SlideMeasure (R side).
     public static int intakeTuneOffset = 0; // TODO: tune. Ticks added to intake height
-    final int flowerOuttake = 1060; // TODO: tune. Arbitrary midpoint between intake and shoot
-    final int upPos = 1964; // Shoot position
+    final int upPos = 1040; // Shoot position (estimate for ~29 in total height). TODO: fine tune
+    final int flowerOuttake = 630; // TODO: tune. Midpoint between intake and shoot
     public static double SLIDE_POWER = 0.9;
     public static double BUSY_CHECK_DELAY = 0.1; // seconds before trusting isBusy() after a command
     public static int START_TILT_TICKS = 0; // magazine goes to intake the moment the lift starts
     public static double DOWN_POWER = 0.5;     // TODO: tune. Max power while moving down
     public static double SLOW_POWER = 0.2;     // TODO: tune. Power for the final part of a downward move
     public static int SLOW_ZONE_TICKS = 300;   // TODO: tune. Switch to SLOW_POWER this close to the target
+    public static int INTAKE_SEEK_TICKS = 80; // TODO: tune. Going down to intake aims this far below, so IntakeLS is always reached
     public static double HOMING_POWER = 0.3;   // TODO: tune. Slow downward power while searching for a switch
     public static double HOMING_TIMEOUT = 6.0; // seconds before giving up
     // Slide positions, lowest to highest
@@ -174,13 +175,15 @@ public class LinearSlides {
         }
         lastIntakeHit = intakeHit;
 
-        // Controlled descent: slow down for the last part of a downward move
-        if (moving && movingDown && !slowed) {
-            int remaining = Math.abs(slideMotorRight.getTargetPosition() - slideMotorRight.getCurrentPosition());
-            if (remaining <= SLOW_ZONE_TICKS) {
-                slideMotorRight.setPower(SLOW_POWER);
-                slideMotorLeft.setPower(SLOW_POWER);
-                slowed = true;
+        // Controlled descent: left follows right's actual position; right slows near the end
+        if (moving && movingDown) {
+            slideMotorLeft.setTargetPosition(-slideMotorRight.getCurrentPosition());
+            if (!slowed) {
+                int remaining = Math.abs(slideMotorRight.getTargetPosition() - slideMotorRight.getCurrentPosition());
+                if (remaining <= SLOW_ZONE_TICKS) {
+                    slideMotorRight.setPower(SLOW_POWER); // only the master slows
+                    slowed = true;
+                }
             }
         }
 
@@ -210,11 +213,14 @@ public class LinearSlides {
     // ================= PRIVATE HELPERS (all motor commands go through here) =================
     /** pos = slide height in ticks (positive = up). */
     /** pos = slide height in ticks (positive = up). Downward moves use DOWN_POWER. */
+    /** pos = slide height in ticks (positive = up). Downward moves: right controls speed, left follows. */
     private void driveTo(int pos) {
+        boolean down = (-pos + offsetR) > slideMotorRight.getCurrentPosition(); // right counts toward 0 going down
+        if (down && levelIndex == 0) pos -= INTAKE_SEEK_TICKS; // aim below IntakeLS; the switch stops it
         int raw = -pos + offsetR;
-        boolean down = raw > slideMotorRight.getCurrentPosition(); // right counts toward 0 going down
         setTargetsRaw(raw, down ? DOWN_POWER : SLIDE_POWER);
         movingDown = down;
+        if (down) slideMotorLeft.setTargetPosition(-slideMotorRight.getCurrentPosition()); // left follows from here
     }
 
     /** Sets right to rawRightTarget, left to its mirror, and runs both. */
@@ -224,13 +230,14 @@ public class LinearSlides {
     }
 
     /** Sets right to rawRightTarget, left to its mirror, and runs both at the given power. */
+    /** Right gets the given power (speed limit); left always full power so it can hold its side. */
     private void setTargetsRaw(int rawRightTarget, double power) {
         slideMotorRight.setTargetPosition(rawRightTarget);
         slideMotorLeft.setTargetPosition(-rawRightTarget);
         slideMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideMotorRight.setPower(power);
-        slideMotorLeft.setPower(power);
+        slideMotorLeft.setPower(SLIDE_POWER);
         moving = true;
         movingDown = false;
         slowed = false;
