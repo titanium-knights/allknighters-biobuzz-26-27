@@ -19,7 +19,6 @@ public class LinearSlides {
     // ================= POSITIONS (ticks, positive = up) =================
     final int gameStartPos = -1; // Placeholder (legacy)
     final int gameStartPosReal = 215; // Encoder ticks StartLS -> IntakeLS. Measured with SlideMeasure (R side).
-    public static int intakeTuneOffset = 0; // TODO: tune. Ticks added to intake height
     final int upPos = 1500;        // TODO: tune toward 29 in
     final int flowerOuttake = 860; // TODO: tune. Midpoint between intake and shoot
     public static double SLIDE_POWER = 0.9;
@@ -29,7 +28,8 @@ public class LinearSlides {
     public static double DOWN_POWER = 0.35;    // speed limit going down (right/master)
     public static double SLOW_POWER = 0.12;    // TODO: tune. Creep speed for the final approach
     public static int SLOW_ZONE_TICKS = 400;   // TODO: tune. Start creeping this far before the expected stop
-    public static int INTAKE_SEEK_TICKS = 60;  // TODO: tune. Aim this far below expected intake; IntakeLS stops it
+    public static int intakeTuneOffset = 40;  // ticks ABOVE intake to stop at (keeps intake off the ground). Tune.
+    public static int INTAKE_SEEK_TICKS = 0;  // never aim below intake
     public static int TRIM_TICKS = 20; // per gamepad press when trimming the intake height
     public static double HOMING_POWER = 0.3;   // TODO: tune. Slow downward power while searching for a switch
     public static double HOMING_TIMEOUT = 6.0; // seconds before giving up
@@ -75,7 +75,8 @@ public class LinearSlides {
     public void goToLevel(int index) {
         if (index < 0 || index >= levelPositions.length) return;
         levelIndex = index;
-        driveTo(levelPositions[index]);
+        int pos = (index == 0) ? gameStartPosReal + intakeTuneOffset : levelPositions[index];
+        driveTo(pos);
     }
     public void levelUp() {
         if (homing) return;

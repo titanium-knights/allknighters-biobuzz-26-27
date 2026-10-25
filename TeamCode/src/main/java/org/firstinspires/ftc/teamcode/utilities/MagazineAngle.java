@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MagazineAngle {
     public Servo angleServo;
-    public static double INTAKE_POS = 0.55; // intake angle
-    public static double SHOOT_POS = 0.65;  // shooting angle (separate value, tune independently)
+    public static double INTAKE_POS = 0.575; // intake angle
+    public static double SHOOT_POS = 0.6;  // shooting angle (separate value, tune independently)
     public static double STOW_POS = 0.75;   // start angle for 18 in sizing
     public static double NUDGE_STEP = 0.01; // per D-pad press when measuring
     public static double MOVE_TIME = 0.5;   // seconds allowed to reach a position

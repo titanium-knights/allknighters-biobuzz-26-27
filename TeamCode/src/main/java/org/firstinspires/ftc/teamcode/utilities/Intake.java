@@ -9,9 +9,9 @@ public class Intake {
     public Servo armServoR;
     public CRServo intakeServo;
 
-    // Flopper arm positions (measured). Left and right are mounted mirrored.
+    // Flopper arm positions (measured). Left and right are mounted mirrored
     public static double UP_L = 0.35, UP_R = 0.63;
-    public static double DOWN_L = 0.0, DOWN_R = 1.0;
+    public static double DOWN_L = 0.05, DOWN_R = 0.95;
     public static double ROLLER_POWER = 0.9;
 
     private boolean armUp = false;

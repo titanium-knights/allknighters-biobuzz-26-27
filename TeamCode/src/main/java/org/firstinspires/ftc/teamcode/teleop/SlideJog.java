@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
 import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "SlideJog")
+@Disabled
 public class SlideJog extends OpMode {
     private static final double JOG_POWER = 0.4;  // speed while a bumper is held
     private static final double HOLD_POWER = 0.9; // holding strength when released

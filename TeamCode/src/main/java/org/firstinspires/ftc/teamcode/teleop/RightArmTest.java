@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "RightArmTest")
+@Disabled
 public class RightArmTest extends OpMode {
     private static final double FINE = 0.01;
     private static final double COARSE = 0.05;

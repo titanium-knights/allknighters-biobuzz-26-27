@@ -8,8 +8,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.utilities.MagazineBelt;
 import org.firstinspires.ftc.teamcode.utilities.MagazineServos;
 import org.firstinspires.ftc.teamcode.utilities.OuttakeHood;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "MagazineTest2")
+@Disabled
 public class MagazineTest2 extends OpMode {
     public static double SPINUP_TIME = 1.0;  // seconds after Start before the belt may run
     public static double EMPTY_TIME = 5.0;   // Y runs the belt this long

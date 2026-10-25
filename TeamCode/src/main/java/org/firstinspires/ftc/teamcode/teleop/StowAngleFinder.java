@@ -4,8 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @TeleOp(name = "StowAngleFinder")
+@Disabled
 public class StowAngleFinder extends OpMode {
     private static final double FINE = 0.01;
     private static final double COARSE = 0.05;
