@@ -35,11 +35,6 @@ public class BlueClose extends LinearOpMode {
         linearSlides = new LinearSlides(hardwareMap, telemetry, magazineAngle);
         waitForStart();
 
-        linearSlides.startInitialManeuver();
-        while (linearSlides.isMoving()){
-            linearSlides.update();
-        }
-        moveFor(20, 0, 0, 0);
 
     }
 

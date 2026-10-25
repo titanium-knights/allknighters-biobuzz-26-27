@@ -124,6 +124,8 @@ public class MainTeleop extends OpMode {
             magazineServos.stopIntake();
         }
 
+
+
         // ===== Auto indexing: pollen seen -> one belt cycle =====
         indexer.update(atIntake && intakeOn);
         // Gamepad 2 Y: override, count a pollen and move one paddle (only at intake)

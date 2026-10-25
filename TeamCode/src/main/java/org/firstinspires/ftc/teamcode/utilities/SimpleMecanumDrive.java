@@ -38,7 +38,7 @@ SimpleMecanumDrive {
         double blPower = y - x + turn;
         double brPower = y + x - turn;
 
-        double max = Math.max(1.0, Math.max(
+        double max = Math.max(0.5, Math.max(
                 Math.max(Math.abs(flPower), Math.abs(frPower)),
                 Math.max(Math.abs(blPower), Math.abs(brPower))));
 
