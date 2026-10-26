@@ -19,9 +19,10 @@ public class LimelightTest extends OpMode {
 
     @Override
     public void loop(){
+        try{
         limelight.update();
         telemetry.addData("Has Target", limelight.hasTarget());
-        limelight.addToTele();
+        limelight.addToTele();} catch (Exception ignored){}
 
 
 
