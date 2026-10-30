@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.auton;
 
-import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
 
 import com.pedropathing.api.PoseFactory;
