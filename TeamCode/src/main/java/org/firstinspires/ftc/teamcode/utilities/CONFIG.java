@@ -18,6 +18,12 @@ public class CONFIG {
   public static final String BACK_RIGHT = "br";
   public static final DcMotorSimple.Direction BR_DIRECTION = DcMotorSimple.Direction.FORWARD;
 
+  // Placeholder hardware names for the two-turret robot; rename to match the robot config.
+  public static final String POLLEN_FLYWHEEL = "PollenFlywheel";
+  public static final String POLLEN_AIM_SERVO = "PollenAimServo";
+  public static final String NECTAR_FLYWHEEL = "NectarFlywheel";
+  public static final String NECTAR_AIM_SERVO = "NectarAimServo";
+
   //Apriltag IDS. The position is based on looking at the field if the red is on the left
   public static final int backRedLeftTagID = 37;
     public static final int backRedRightTagID = 34;
