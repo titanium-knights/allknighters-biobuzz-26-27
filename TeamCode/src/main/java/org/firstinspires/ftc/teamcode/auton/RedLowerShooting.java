@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.auton;
 
-import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 
-public class RedShooting {
+public class RedLowerShooting {
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
