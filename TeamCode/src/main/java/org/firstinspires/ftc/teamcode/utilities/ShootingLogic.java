@@ -10,8 +10,6 @@ public class ShootingLogic {
     final public DcMotor shootMotor;
     private final MagazineBelt magazineBelt;
     private final OurColorSensor colorSensor;
-    private final Flywheel flywheel;
-    private final VoltageSensor voltageSensor;
     private final OuttakeHood outtakeHood;
     private int shotBallCount = 0;
     public boolean isShooting = false;
@@ -19,15 +17,13 @@ public class ShootingLogic {
     private final Telemetry tele;
     public ShootingLogic(HardwareMap hMap, Telemetry tele, OurColorSensor colorSensor, MagazineBelt magazineBelt, OuttakeHood outtakeHood){
         shootMotor = hMap.get(DcMotor.class, "ShootMotor");
-        voltageSensor = hMap.get(VoltageSensor.class, "VoltageSensor");
         this.magazineBelt = magazineBelt;
-        this.colorSensor = colorSensor;
-        flywheel = new Flywheel(shootMotor, tele, voltageSensor);
         this.tele = tele;
         this.outtakeHood = outtakeHood;
+        this.colorSensor = colorSensor;
     }
     public void shootBall(){
-        if (flywheelSpinning) {
+        if (shootMotor.getPower()>0) {
             isShooting = true;
             shotBallCount = 0;
             colorSensor.RegisterBallShot();
@@ -35,12 +31,8 @@ public class ShootingLogic {
         } else {tele.addData("SHOOTER NOT ON!!!", "SHOOTER NOT ON");}
     }
     public void updateDuringShoot(){
-        if (flywheel.isAtSpeed() && !magazineBelt.isRunning && shotBallCount<4 && isShooting){
-            if(colorSensor.loadedBalls.getFirst() == OurColorSensor.color.YELLOW){
-                outtakeHood.flapPollen();
-            } else{
-                outtakeHood.flapNectar();
-            }
+        if (!magazineBelt.isRunning && shotBallCount<4 && isShooting){
+            outtakeHood.flapPollen();
             shotBallCount++;
             magazineBelt.startCycle();
         } else if (shotBallCount>=4){
@@ -48,18 +40,14 @@ public class ShootingLogic {
             shotBallCount = 0;
         }
     }
-    public double setTargetRPM(double targetRPM){
-        double oldRPM = flywheel.getTargetRPM();
-        flywheel.setTargetRPM(targetRPM);
-        return oldRPM;
+    public double setPower(int power){
+        double oldPower = shootMotor.getPower();
+        shootMotor.setPower(power);
+        return oldPower;
     }
-    public void update(){
-        flywheel.update();
-        tele.addData("Flywheel CURRENT Speed", flywheel.getCurrentRPM());
-        tele.addData("Flywheel TARGET Speed", flywheel.getTargetRPM());
+    public double getPower(double targetRPM){
+        return shootMotor.getPower();
     }
-    public double getTargetRPM(double targetRPM){
-        return flywheel.getTargetRPM();
-    }
+
 
 }

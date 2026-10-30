@@ -96,6 +96,9 @@ public class Limelight {
         telemetry.addData("Target Area", result.getTa());
     }
 
+    public long getStaleness(){return result.getStaleness();}
+
+
     public void stop() {
         limelight3A.stop();
         result = null;

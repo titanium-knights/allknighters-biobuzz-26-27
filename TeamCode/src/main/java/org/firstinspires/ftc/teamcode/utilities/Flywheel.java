@@ -237,13 +237,12 @@ public class Flywheel {
         }
         shooterOn = on;
     }
+    public void setMaxRpm(){
+        shooter.setPower(2000);
+    }
 
     public boolean isShooterOn() {
         return shooterOn;
-    }
-
-    public void toggleShooterOn() {
-        setShooterOn(!shooterOn);
     }
 
     public double getCurrentRPM() {
