@@ -10,10 +10,10 @@ public class MagazineAngle {
     private double power = 0.3;
     private ElapsedTime runtime = new ElapsedTime();
 
-
-    public MagazineAngle(HardwareMap hmap){
+// archived: DNE
+    /*public MagazineAngle(HardwareMap hmap){
         angleServo = hmap.get(CRServo.class, "Magazine Angle Servo");
-    }
+    }*/
     public void magAngleForward(){
         angleServo.setPower(power);
         runtime.reset();

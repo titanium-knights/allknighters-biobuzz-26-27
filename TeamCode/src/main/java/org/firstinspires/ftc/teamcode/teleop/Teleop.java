@@ -36,7 +36,7 @@ public class Teleop extends OpMode {
 
     @Override
     public void init() {
-        subsystemManager = new SubsystemManager(hardwareMap, telemetry);
+        //archived: DNE subsystemManager = new SubsystemManager(hardwareMap, telemetry);
         modifier = 1.0;
         ourColorSensor = subsystemManager.colorSensors;
         intake = subsystemManager.intake;
