@@ -26,7 +26,7 @@ public class testservos extends OpMode {
         magazineBelt = new MagazineBelt(hardwareMap);
         //subsystemManager = new SubsystemManager(hardwareMap, telemetry);
         beltServo = hardwareMap.get(CRServo.class, "Belt Servo");
-        magazineAngle = new MagazineAngle(hardwareMap);
+        //magazineAngle = new MagazineAngle(hardwareMap);
         linearSlides = new LinearSlides(hardwareMap, telemetry, magazineAngle);
     }
 

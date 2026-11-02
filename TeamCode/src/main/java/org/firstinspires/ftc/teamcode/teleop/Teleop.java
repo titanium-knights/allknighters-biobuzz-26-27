@@ -38,7 +38,7 @@ public class Teleop extends OpMode {
     public void init() {
         //archived: DNE subsystemManager = new SubsystemManager(hardwareMap, telemetry);
         modifier = 1.0;
-        ourColorSensor = subsystemManager.colorSensors;
+        //ourColorSensor = subsystemManager.colorSensors;
         intake = subsystemManager.intake;
         magazineServos = subsystemManager.magazineServos;
         magazineAngle = subsystemManager.magazineAngle;
@@ -59,8 +59,8 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         modifier = (gamepad1.b) ? -0.8 : 1.0;
-        OurColorSensor.color detectedColor = ourColorSensor.detectColor(telemetry);
-        ourColorSensor.magazineTelemetry(telemetry);
+        //OurColorSensor.color detectedColor = ourColorSensor.detectColor(telemetry);
+        //ourColorSensor.magazineTelemetry(telemetry);
 
         // chassis
         if (!gamepad1.a) {
@@ -127,9 +127,12 @@ public class Teleop extends OpMode {
         } else if (gamepad1.right_trigger > 0.5) {
             intake.run();
             magazineServos.run();
+            /*
             if (detectedColor != OurColorSensor.color.EMPTY) {
                 ourColorSensor.RegisterBallIntake(detectedColor);
             }
+
+             */
         } else if (gamepad1.left_trigger > 0.5) {
             intake.outtake();
             magazineServos.outtake();
