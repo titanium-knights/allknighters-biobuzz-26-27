@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class CONFIG {
   public static final String LIMELIGHT = "limelight";
+  public static final String IMU = "imu"; // the Control Hub's built-in IMU (default config name)
+  public static final String PINPOINT = "pinpoint"; // goBILDA Pinpoint, on a Control Hub I2C port
 
   public static final String FRONT_LEFT = "fl";
   public static final DcMotorSimple.Direction FL_DIRECTION = DcMotorSimple.Direction.FORWARD;

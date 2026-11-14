@@ -9,6 +9,7 @@ import com.pedropathing.revhub.localizers.PinpointConfig;
 import com.pedropathing.revhub.localizers.PinpointLocalizer;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utilities.CONFIG;
 
 public class Constants {
@@ -24,12 +25,16 @@ public class Constants {
         c.backRightDirection.set(CONFIG.BR_DIRECTION);
     });
 
+    // From the Pinpoint Tuner. Re-run it if the pods are moved.
     public static PinpointConfig pinpointConfig = new PinpointConfig(c -> {
-        c.name.set("pinpoint");
+        c.name.set(CONFIG.PINPOINT);
+        c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        c.xPodOffset.set(-3.089297737662248);
+        c.yPodOffset.set(-7.128120482437255);
         c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
         c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        c.xPodOffset.set(0.0);
-        c.yPodOffset.set(0.0);
+        c.globalDistanceUnit.set(DistanceUnit.INCH);
+        c.offsetUnits.set(DistanceUnit.INCH);
     });
 
     public static ForesightConfig foresightConfig = new ForesightConfig(c -> {});
