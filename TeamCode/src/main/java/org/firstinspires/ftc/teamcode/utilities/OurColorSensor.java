@@ -62,6 +62,16 @@ public class OurColorSensor {
         loadedBalls.pop();
         loadedBalls.add(color.EMPTY);
     }
+    /** {Lr, Lg, Lb, Rr, Rg, Rb}, each 10 * channel / alpha — the same units detectColor's telemetry shows.
+     *  The color classifier is trained on these, so it must be fed exactly these on the robot. */
+    public double[] readNormalized() {
+        NormalizedRGBA l = colorSensorL.getNormalizedColors();
+        NormalizedRGBA r = colorSensorR.getNormalizedColors();
+        return new double[]{
+                10.0 * l.red / l.alpha, 10.0 * l.green / l.alpha, 10.0 * l.blue / l.alpha,
+                10.0 * r.red / r.alpha, 10.0 * r.green / r.alpha, 10.0 * r.blue / r.alpha};
+    }
+
     public color detectColor(Telemetry tele) {
         NormalizedRGBA colorsR = colorSensorR.getNormalizedColors();
         NormalizedRGBA colorsL = colorSensorL.getNormalizedColors();
