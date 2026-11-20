@@ -88,7 +88,7 @@ public class OurColorSensor {
         normBlueL = 10 * blueL / alphaL;
         normGreenL = 10 * greenL / alphaL;
 
-        tele.addData("Right Color RGB", format.format(normRedR) + ", " + format.format(normBlueR) + ", " + format.format(normBlueR));
+        tele.addData("Right Color RGB", format.format(normRedR) + ", " + format.format(normGreenR) + ", " + format.format(normBlueR));
         tele.addData("Left Color RGB", format.format(normRedL) + ", " + format.format(normGreenL) + ", " + format.format(normBlueL));
     /*
         // Purple telemetry: yet to be done
