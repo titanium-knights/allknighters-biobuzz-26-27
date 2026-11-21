@@ -23,7 +23,6 @@ public class Limelight {
     public double horizontalDistance;
     private final Limelight3A limelight3A;
     private LLResult result;
-    private Pose3D cordResult;
     private LLResultTypes.FiducialResult currentApriltag;
     private final Telemetry telemetry;
 
@@ -45,7 +44,6 @@ public class Limelight {
 
     public void update() {
         result = limelight3A.getLatestResult();
-        cordResult = result.getBotpose_MT2();
         currentApriltag = getFiducial();
     }
     public LLResultTypes.FiducialResult getFiducial(){
@@ -64,7 +62,7 @@ public class Limelight {
         double x = currentApriltag.getTargetPoseRobotSpace().getPosition().x;
         double y = currentApriltag.getTargetPoseRobotSpace().getPosition().y;
         double horizontalDistance = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
-        double distanceTurretToTag = Math.sqrt(Math.pow(x-leftTurretx, 2) + Math.pow(y-rightTurrety, 2));
+        double distanceTurretToTag = Math.sqrt(Math.pow(x-leftTurretx, 2) + Math.pow(y-leftTurrety, 2));
         return Math.asin(Math.sin(result.getTx()) * horizontalDistance)/distanceTurretToTag;
     }
 
