@@ -3,15 +3,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.utilities.Flywheel;
-import org.firstinspires.ftc.teamcode.utilities.Intake;
-import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
-import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
-import org.firstinspires.ftc.teamcode.utilities.MagazineBelt;
-import org.firstinspires.ftc.teamcode.utilities.MagazineServos;
-import org.firstinspires.ftc.teamcode.utilities.OurColorSensor;
-import org.firstinspires.ftc.teamcode.utilities.OuttakeHood;
-import org.firstinspires.ftc.teamcode.utilities.ShootingLogic;
 import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
 
 //Wifi Password: FTCTitaniumA15887!

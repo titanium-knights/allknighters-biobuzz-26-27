@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.utilities.LinearSlides;
-import org.firstinspires.ftc.teamcode.utilities.MagazineAngle;
-import org.firstinspires.ftc.teamcode.utilities.MagazineBelt;
-import org.firstinspires.ftc.teamcode.utilities.SubsystemManager;
+import org.firstinspires.ftc.teamcode.utilities.unused.LinearSlides;
+import org.firstinspires.ftc.teamcode.utilities.unused.MagazineAngle;
+import org.firstinspires.ftc.teamcode.utilities.unused.MagazineBelt;
+
 @TeleOp(name = "TestServos")
 public class testservos extends OpMode {
     //private SubsystemManager subsystemManager;
