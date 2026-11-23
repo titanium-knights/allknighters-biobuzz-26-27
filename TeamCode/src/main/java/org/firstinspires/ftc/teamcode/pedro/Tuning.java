@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+import com.pedropathing.algorithm.Foresight;
 import com.pedropathing.revhub.drivetrains.Mecanum;
 import com.pedropathing.revhub.localizers.PinpointLocalizer;
 import com.pedropathing.tuning.autotune.Procedure;
@@ -33,6 +34,6 @@ public class Tuning {
         return new Tests(
                 hardwareMap -> new Mecanum(hardwareMap, Constants.drivetrainConfig),
                 hardwareMap -> new PinpointLocalizer(hardwareMap, Constants.pinpointConfig),
-                null);
+                () -> new Foresight(Constants.foresightConfig)); // null disabled the Line/Curve/Hold tests
     }
 }
