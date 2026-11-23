@@ -49,7 +49,6 @@ public class PushBotTeleop extends OpMode{
         if (subsystemManager != null) {
             subsystemManager.drive.stop();
             subsystemManager.intake.stopIntake();
-            subsystemManager.magazineServos.stopIntake();
         }
     }
 }
