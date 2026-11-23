@@ -30,9 +30,9 @@ public class Constants {
         c.name.set(CONFIG.PINPOINT);
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         c.xPodOffset.set(-3.089297737662248);
-        c.yPodOffset.set(-7.128120482437255);
+        c.yPodOffset.set(7.128120482437255); // sign flipped: was tuned while yPodDirection was wrong; a 90° turn in place drifted (-14.5, -11.0)
         c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED); // pushing left read y=-24.0 with FORWARD; Pedro wants +y = left
         c.globalDistanceUnit.set(DistanceUnit.INCH);
         c.offsetUnits.set(DistanceUnit.INCH);
     });
